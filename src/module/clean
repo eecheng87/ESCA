@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -f scTab.h
+make -C/lib/modules/`uname -r`/build M=$PWD clean

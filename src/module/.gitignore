@@ -1,0 +1,10 @@
+.*.cmd
+*.ko
+*.mod
+*.mod.c
+*.mod.o
+*.o
+*.a
+modules.order
+Module.symvers
+scTab.h
