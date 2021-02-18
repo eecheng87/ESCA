@@ -1,9 +1,9 @@
 all: so test
 
 test:
-	gcc test.c -o test
+	gcc -I../include test.c -o test
 so:
-	gcc -shared -fPIC preload.c -o preload.so -ldl
+	gcc -I../include -shared -fPIC preload.c -o preload.so -ldl
 
 
 .PHONY: clean test preload.so
