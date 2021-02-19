@@ -51,4 +51,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-src/user/test
+user/test
