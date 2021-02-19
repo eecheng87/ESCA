@@ -18,6 +18,9 @@ typedef struct syscall {
 	long  arg[6];                   /* args for this call */
 } syscall_t;
 
+#define BENTRY_EMPTY 0
+#define BENTRY_BUSY 1
+
 struct batch_entry {
   unsigned nargs;
   unsigned rstatus;
@@ -32,23 +35,9 @@ struct batch_entry {
 #   include <unistd.h>                  /* syscall() */
 #endif
 
-/*
-static inline long indirect_call(int nr, int argc, long *a) {
-	switch (argc) {
-		case 0: return syscall(nr);
-		case 1: return syscall(nr, a[0]);
-		case 2: return syscall(nr, a[0], a[1]);
-		case 3: return syscall(nr, a[0], a[1], a[2]);
-		case 4: return syscall(nr, a[0], a[1], a[2], a[3]);
-		case 5: return syscall(nr, a[0], a[1], a[2], a[3], a[4]);
-		case 6: return syscall(nr, a[0], a[1], a[2], a[3], a[4], a[5]);
-	}
-	return ENOSYS;
-}*/
-
-static inline long batch_flush(int start, int end)
+static inline long batch_flush()
 {
-	syscall(__NR_batch, start, end);
+	syscall(__NR_batch);
 }
 
 static inline long batch_register(struct batch_entry* table)

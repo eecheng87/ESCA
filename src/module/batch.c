@@ -19,19 +19,6 @@ MODULE_LICENSE("MIT License");
 
 struct page *pinned_pages[1];
 
-static inline long segv(void const *Addr)
-{
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4,12,0)
-	struct siginfo info;
-#else
-	struct kernel_siginfo info;
-#endif
-	memset(&info, 0, sizeof info);
-	info.si_signo = SIGSEGV;
-	info.si_addr = (void *)Addr;
-	return send_sig_info(SIGSEGV, &info, current);
-}
-
 typedef asmlinkage long (*F0_t)(void);
 typedef asmlinkage long (*F1_t)(long);
 typedef asmlinkage long (*F2_t)(long, long);
@@ -59,11 +46,12 @@ static inline long indirect_call(void *f, int argc, long *a)
 
 static void **scTab = 0;
 struct batch_entry *batch_table;
+int table_size = 64;
 
 asmlinkage long sys_register(const struct pt_regs *regs)
 {
     printk(KERN_INFO "Start register, address at regs is %p\n", regs);
-    int n_page;
+    int n_page, i;
     unsigned long p1 = regs->di;
 
     /* map batch table from user-space to kernel */
@@ -76,19 +64,39 @@ asmlinkage long sys_register(const struct pt_regs *regs)
 
     batch_table = (struct batch_entry*)kmap(pinned_pages[0]);
 
+    /* initial table status */
+    for(i = 0; i < table_size; i++){
+        batch_table[i].rstatus = BENTRY_EMPTY;
+    }
+
     return 0;
 }
+
+int start_index = 0;
 
 asmlinkage long sys_batch(const struct pt_regs *regs)
 {
 	unsigned long start   = regs->di;
 	unsigned long end   = regs->si;
 	//unsigned long ncall = regs->dx;
-    printk(KERN_INFO "Start flushing, start from %ld to %ld\n", start, end);
-    unsigned long i, ret;
-    for(i = start; i <= end; i++){
-        indirect_call(scTab[batch_table[i].sysnum], batch_table[i].nargs, batch_table[i].args);
+    printk(KERN_INFO "Start flushing\n");
+    unsigned long i = start_index, ret;
+    while(batch_table[i].rstatus == BENTRY_BUSY){
+        switch (batch_table[i].sysnum)
+        {
+        case __NR_write:{
+            int fd = batch_table[i].args[0];
+            batch_table[i].args[0] = fd < 0 ? batch_table[-fd].sysret : fd;
+            break;
+        }
+        default:
+            break;
+        }
+        batch_table[i].sysret = indirect_call(scTab[batch_table[i].sysnum], batch_table[i].nargs, batch_table[i].args);
+        batch_table[i].rstatus = BENTRY_EMPTY;
+        i = (i == 63) ? 0 : i + 1;
     }
+    start_index = i;
     return 0;
 }
 

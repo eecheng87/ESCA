@@ -1,46 +1,61 @@
 #include "preload.h"
-int curindex = 0;
-int open(const char *pathname, int flags, mode_t mode) {
-    fprintf(stderr, "called open()\n");
-    if (!real_open)
-        real_open = dlsym(RTLD_NEXT, "open");
+int curindex;
+int table_size = 64;
 
-    return real_open(pathname, flags, mode);
+int open(const char *pathname, int flags, mode_t mode) {
+
+    btable[curindex].sysnum = __NR_open;
+    btable[curindex].rstatus = BENTRY_BUSY;
+    btable[curindex].nargs = 3;
+    btable[curindex].args[0] = (long)pathname;
+    btable[curindex].args[1] = flags;
+    btable[curindex].args[2] = mode;
+    curindex = (curindex == table_size - 1) ? 0 : curindex + 1;
+
+    /* memorize the -index of fd */
+    return -(curindex - 1);
 }
 
 int close(int fd) {
-    fprintf(stderr, "called close\n");
-    if (!real_close)
-        real_close = dlsym(RTLD_NEXT, "write");
 
-    return real_close(fd);
+    btable[curindex].sysnum = __NR_close;
+    btable[curindex].rstatus = BENTRY_BUSY;
+    btable[curindex].nargs = 1;
+    btable[curindex].args[0] = fd;
+    curindex = (curindex == table_size - 1) ? 0 : curindex + 1;
+
+    return 0;
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
-    fprintf(stderr, "called write()\n");
-    /*if (!real_write)
-        real_write = dlsym(RTLD_NEXT, "write");*/
+
     btable[curindex].sysnum = __NR_write;
+    btable[curindex].rstatus = BENTRY_BUSY;
     btable[curindex].nargs = 3;
     btable[curindex].args[0] = fd;
     btable[curindex].args[1] = (long)buf;
-    btable[curindex++].args[2] = count;
+    btable[curindex].args[2] = count;
+    curindex = (curindex == table_size - 1) ? 0 : curindex + 1;
 
-    return curindex - 1;//real_write(fd, buf, count);
+    return 0;
 }
 
 ssize_t read(int fd, void *buf, size_t count) {
-    fprintf(stderr, "called read()\n");
-    if (!real_read)
-        real_read = dlsym(RTLD_NEXT, "read");
 
-    return real_read(fd, buf, count);
+    btable[curindex].sysnum = __NR_read;
+    btable[curindex].rstatus = BENTRY_BUSY;
+    btable[curindex].nargs = 3;
+    btable[curindex].args[0] = fd;
+    btable[curindex].args[1] = (long)buf;
+    btable[curindex].args[2] = count;
+    curindex = (curindex == table_size - 1) ? 0 : curindex + 1;
+
+    return 0;
 }
 
 __attribute__((constructor)) static void setup(void) {
-    fprintf(stderr, "called setup()\n");
     size_t pgsize = getpagesize();
+    curindex = 0;
     btable = (struct batch_entry*)aligned_alloc(pgsize, pgsize);
-    fprintf(stderr, "address of btable is %p, size is %ld\n", btable, pgsize);
     syscall(__NR_register, btable);
 }

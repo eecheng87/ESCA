@@ -14,10 +14,10 @@ int main(int argc, char **argv) {
                S_IWUSR | S_IRUSR | S_IRGRP | S_IWGRP | S_IROTH);
     close(ptr);
     read(1, buff, 4);*/
-    int start = write(1, "hihi", 4);
     write(1, "hihi", 4);
     write(1, "hihi", 4);
-    int end = write(1, "hihi", 4);
-    batch_flush(start, end);
+    write(1, "hihi", 4);
+    write(1, "hihi", 4);
+    batch_flush();
     return 0;
 }
