@@ -28,7 +28,6 @@ int close(int fd) {
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
-
     btable[curindex].sysnum = __NR_write;
     btable[curindex].rstatus = BENTRY_BUSY;
     btable[curindex].nargs = 3;

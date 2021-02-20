@@ -47,6 +47,7 @@ static inline long indirect_call(void *f, int argc, long *a)
 static void **scTab = 0;
 struct batch_entry *batch_table;
 int table_size = 64;
+int start_index;
 
 asmlinkage long sys_register(const struct pt_regs *regs)
 {
@@ -69,10 +70,10 @@ asmlinkage long sys_register(const struct pt_regs *regs)
         batch_table[i].rstatus = BENTRY_EMPTY;
     }
 
+    start_index = 1;
+
     return 0;
 }
-
-int start_index = 1;
 
 asmlinkage long sys_batch(const struct pt_regs *regs)
 {
@@ -82,6 +83,7 @@ asmlinkage long sys_batch(const struct pt_regs *regs)
     printk(KERN_INFO "Start flushing\n");
     unsigned long i = start_index, ret;
     while(batch_table[i].rstatus == BENTRY_BUSY){
+        printk(KERN_INFO "Index %ld do syscall %d\n", i, batch_table[i].sysnum);
         switch (batch_table[i].sysnum)
         {
         case __NR_write:

@@ -6,7 +6,6 @@
 #include <linux/batch.h>
 
 int main(int argc, char **argv) {
-    char buff[8];
     int fd = open("test.txt", O_CREAT | O_WRONLY,
                    S_IWUSR | S_IRUSR | S_IRGRP | S_IWGRP | S_IROTH);
     write(fd, "hihi", 4);
