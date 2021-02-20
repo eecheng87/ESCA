@@ -72,7 +72,7 @@ asmlinkage long sys_register(const struct pt_regs *regs)
     return 0;
 }
 
-int start_index = 0;
+int start_index = 1;
 
 asmlinkage long sys_batch(const struct pt_regs *regs)
 {
@@ -84,7 +84,10 @@ asmlinkage long sys_batch(const struct pt_regs *regs)
     while(batch_table[i].rstatus == BENTRY_BUSY){
         switch (batch_table[i].sysnum)
         {
-        case __NR_write:{
+        case __NR_write:
+        case __NR_read:
+        case __NR_close:
+        {
             int fd = batch_table[i].args[0];
             batch_table[i].args[0] = fd < 0 ? batch_table[-fd].sysret : fd;
             break;
@@ -94,7 +97,7 @@ asmlinkage long sys_batch(const struct pt_regs *regs)
         }
         batch_table[i].sysret = indirect_call(scTab[batch_table[i].sysnum], batch_table[i].nargs, batch_table[i].args);
         batch_table[i].rstatus = BENTRY_EMPTY;
-        i = (i == 63) ? 0 : i + 1;
+        i = (i == 63) ? 1 : i + 1;
     }
     start_index = i;
     return 0;
