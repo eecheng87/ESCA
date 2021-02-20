@@ -4,29 +4,21 @@
 #include <asm/unistd.h>                 /* __NR_* */
 #define __NR_batch  __NR_afs_syscall    /* Hijack Andrew FS call slot for now */
 #define __NR_register 184               /* Do register routine before using batch */
-#define __NR_wdcpy  -2                  /* word copy: resolved in sys_batch */
-#define __NR_jmpfwd -3                  /* jump forward: resolved in sys_batch */
-#define __NR_assign -4
-#define __NR_strcmp -5
 
-typedef struct syscall {
-	short nr,                       /* syscall number */
-	      jumpFail,                 /* -4096 < in-kern return < 0 jump */
-	      jump0,                    /* == 0 in-kernel return jump */
-	      jumpPos;                  /* > 0 in-kernel return jump */
-	char  argc;                     /* argument count. XXX argc[nr] */
-	long  arg[6];                   /* args for this call */
-} syscall_t;
-
+/* batch table entry info */
 #define BENTRY_EMPTY 0
 #define BENTRY_BUSY 1
 
+#define MAX_THREAD_NUM 10
+#define MAX_ENTRY_NUM 64
+
 struct batch_entry {
-  unsigned nargs;
-  unsigned rstatus;
-  unsigned sysnum;
-  unsigned sysret;
-  long args[6];
+    unsigned pid; /* or thread id */
+    short nargs;
+    short rstatus;
+    unsigned sysnum;
+    unsigned sysret;
+    long args[6];
 };
 
 #ifndef __KERNEL__

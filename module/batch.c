@@ -17,7 +17,7 @@ MODULE_DESCRIPTION("Generic batch system call API");
 MODULE_AUTHOR("Steven Cheng");
 MODULE_LICENSE("MIT License");
 
-struct page *pinned_pages[1];
+struct page *pinned_pages[MAX_THREAD_NUM];
 
 typedef asmlinkage long (*F0_t)(void);
 typedef asmlinkage long (*F1_t)(long);
@@ -45,32 +45,35 @@ static inline long indirect_call(void *f, int argc, long *a)
 
 
 static void **scTab = 0;
-struct batch_entry *batch_table;
+struct batch_entry *batch_table[MAX_THREAD_NUM];
 int table_size = 64;
 int start_index;
+int main_pid; /* PID of main thread */
 
 asmlinkage long sys_register(const struct pt_regs *regs)
 {
     printk(KERN_INFO "Start register, address at regs is %p\n", regs);
-    int n_page, i;
+    int n_page, i, j;
     unsigned long p1 = regs->di;
 
     /* map batch table from user-space to kernel */
     n_page = get_user_pages(
     (unsigned long)(p1), /* Start address to map */
-    1, /* Number of pinned pages. 4096 btyes in this machine */
+    MAX_THREAD_NUM, /* Number of pinned pages. 4096 btyes in this machine */
     FOLL_FORCE | FOLL_WRITE, /* Force flag */
     pinned_pages,            /* struct page ** pointer to pinned pages */
     NULL);
 
-    batch_table = (struct batch_entry*)kmap(pinned_pages[0]);
+    for(i = 0; i < MAX_THREAD_NUM; i++)
+        batch_table[i] = (struct batch_entry*)kmap(pinned_pages[i]);
 
     /* initial table status */
-    for(i = 0; i < table_size; i++){
-        batch_table[i].rstatus = BENTRY_EMPTY;
-    }
+    for(j = 0; j < MAX_THREAD_NUM; j++)
+        for(i = 0; i < MAX_ENTRY_NUM; i++)
+            batch_table[j][i].rstatus = BENTRY_EMPTY;
 
     start_index = 1;
+    main_pid = current->pid;
 
     return 0;
 }
@@ -79,26 +82,27 @@ asmlinkage long sys_batch(const struct pt_regs *regs)
 {
 	unsigned long start   = regs->di;
 	unsigned long end   = regs->si;
-	//unsigned long ncall = regs->dx;
-    printk(KERN_INFO "Start flushing\n");
-    unsigned long i = start_index, ret;
-    while(batch_table[i].rstatus == BENTRY_BUSY){
-        printk(KERN_INFO "Index %ld do syscall %d\n", i, batch_table[i].sysnum);
-        switch (batch_table[i].sysnum)
+	int j = current->pid - main_pid;
+    unsigned long i = start_index;
+
+    printk(KERN_INFO "Start flushing, called from %d\n", main_pid + j);
+    while(batch_table[j][i].rstatus == BENTRY_BUSY){
+        printk(KERN_INFO "Index %ld do syscall %d\n", i, batch_table[j][i].sysnum);
+        switch (batch_table[j][i].sysnum)
         {
         case __NR_write:
         case __NR_read:
         case __NR_close:
         {
-            int fd = batch_table[i].args[0];
-            batch_table[i].args[0] = fd < 0 ? batch_table[-fd].sysret : fd;
+            int fd = batch_table[j][i].args[0];
+            batch_table[j][i].args[0] = fd < 0 ? batch_table[j][-fd].sysret : fd;
             break;
         }
         default:
             break;
         }
-        batch_table[i].sysret = indirect_call(scTab[batch_table[i].sysnum], batch_table[i].nargs, batch_table[i].args);
-        batch_table[i].rstatus = BENTRY_EMPTY;
+        batch_table[j][i].sysret = indirect_call(scTab[batch_table[j][i].sysnum], batch_table[j][i].nargs, batch_table[j][i].args);
+        batch_table[j][i].rstatus = BENTRY_EMPTY;
         i = (i == 63) ? 1 : i + 1;
     }
     start_index = i;
