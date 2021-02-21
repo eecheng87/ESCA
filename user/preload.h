@@ -4,11 +4,10 @@
 #define MAX_THREAD_NUM 10
 
 #include <dlfcn.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <stdlib.h>
 #include <linux/batch.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
 struct batch_entry *btable;
-extern int baseindex;
-extern int curindex;
+extern int curindex[MAX_THREAD_NUM];
