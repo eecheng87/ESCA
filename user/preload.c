@@ -4,7 +4,8 @@ int table_size = 64;
 int main_thread_pid;
 
 int open(const char *pathname, int flags, mode_t mode) {
-    int off, toff = (syscall(186) - main_thread_pid);
+    int off,
+        toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
     btable[off + curindex[toff]].sysnum = __NR_open;
     btable[off + curindex[toff]].rstatus = BENTRY_BUSY;
@@ -21,7 +22,8 @@ int open(const char *pathname, int flags, mode_t mode) {
 }
 
 int close(int fd) {
-    int off, toff = (syscall(186) - main_thread_pid);
+    int off,
+        toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
     btable[off + curindex[toff]].sysnum = __NR_close;
     btable[off + curindex[toff]].rstatus = BENTRY_BUSY;
@@ -53,7 +55,8 @@ ssize_t write(int fd, const void *buf, size_t count) {
 }
 
 ssize_t read(int fd, void *buf, size_t count) {
-    int off, toff = (syscall(186) - main_thread_pid);
+    int off,
+        toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
     btable[off + curindex[toff]].sysnum = __NR_read;
     btable[off + curindex[toff]].rstatus = BENTRY_BUSY;
