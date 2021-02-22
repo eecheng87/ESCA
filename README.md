@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     return 0;
 }
 ```
-Application needed to be compiled with link flag `lpthread` and executed with preload lib as prefix:
+Application is needed to be compiled with link flag `lpthread` and be executed with preload lib as prefix:
 ```shell
 $ LD_PRELOAD=$PWD/preload.so ./test
 ```
@@ -39,7 +39,9 @@ $ LD_PRELOAD=$PWD/preload.so ./test
 More examples can be found under `/example`.
 
 ## Feature
-
+* Support interleaved non-syscall between syscalls
+* Support loop
+* Support multi-thread batching
 
 ## Performance
 So far, we only did simple experiment for measuring performance. Following is summary of experiment, we did 60 times experiment as x-axis. In each iteration, we did 60 times consecutive `write` in three methods.
@@ -47,3 +49,6 @@ So far, we only did simple experiment for measuring performance. Following is su
 ![](https://i.imgur.com/YMZBOgp.png)
 
 Relative experiments can be found under `/experiment`
+
+## Relative project
+c-blake - [batch](https://github.com/c-blake/batch)
