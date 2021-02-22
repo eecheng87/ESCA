@@ -1,9 +1,9 @@
 all: so test
 
 test:
-	gcc -I../include -pthread test.c -o test
+	gcc -I../include test.c -o test -lpthread
 so:
-	gcc -I../include -shared -fPIC preload.c -o preload.so -ldl
+	gcc -I../include -shared -fPIC preload.c -o preload.so -ldl -lpthread
 
 
 .PHONY: clean test preload.so

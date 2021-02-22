@@ -84,16 +84,22 @@ asmlinkage long sys_register(const struct pt_regs *regs) {
     return 0;
 }
 
+/* printk is only for debug usage */
+/* it will lower a lot performance */
 asmlinkage long sys_batch(const struct pt_regs *regs) {
     unsigned long start = regs->di;
     unsigned long end = regs->si;
     int j = current->pid - main_pid;
     unsigned long i = start_index[j];
 
+#if DEBUG
     printk(KERN_INFO "Start flushing, called from %d\n", main_pid + j);
+#endif
     while (batch_table[j][i].rstatus == BENTRY_BUSY) {
+#if DEBUG
         printk(KERN_INFO "Index %ld do syscall %d\n", i,
                batch_table[j][i].sysnum);
+#endif
         switch (batch_table[j][i].sysnum) {
         case __NR_write:
         case __NR_read:

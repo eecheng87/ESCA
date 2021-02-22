@@ -35,9 +35,9 @@ int close(int fd) {
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
-    int off, toff = (syscall(186) - main_thread_pid);
+    int off,
+        toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
-    printf("Try to wrtie at table[%d + %d]\n", off, curindex[toff]);
     btable[off + curindex[toff]].sysnum = __NR_write;
     btable[off + curindex[toff]].rstatus = BENTRY_BUSY;
     btable[off + curindex[toff]].nargs = 3;
