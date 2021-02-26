@@ -1,4 +1,4 @@
-ALL :=  write
+ALL :=  write dwrite
 
 all: $(ALL)
 

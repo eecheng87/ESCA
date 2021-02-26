@@ -7,7 +7,7 @@
 #include <../include/linux/batch.h>
 
 //#define BATCH 0
-#define dBATCH 0
+//#define dBATCH 0
 #define REPEAT 60
 long get_elapse(struct timespec start, struct timespec end) {
     return ((long)1.0e+9 * end.tv_sec + end.tv_nsec) -
@@ -33,6 +33,7 @@ int main(int argc , char *argv[])
         for(i = 0; i < sys_num; i++)
             write(1, buf, strlen(buf));
         #ifdef dBATCH
+        /* batch_flush */
         syscall(183);
         #endif
         clock_gettime(CLOCK_REALTIME, &t2);
