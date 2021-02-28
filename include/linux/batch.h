@@ -2,11 +2,12 @@
 #define LINUX_BATCH_H /* and syscall_t __NR_batch for the kernel module. */
 
 #include <asm/unistd.h>                 /* __NR_* */
-#define __NR_batch  183    /* Hijack Andrew FS call slot for now */
+#define __NR_batch_flush  183    /* Hijack Andrew FS call slot for now */
 #define __NR_register 184               /* Do register routine before using batch */
+#define __NR_batch_start 185
 
 /* config Debug mode */
-#define DEBUG 0
+#define DEBUG 1
 
 /* batch table entry info */
 #define BENTRY_EMPTY 0
@@ -29,11 +30,6 @@ struct batch_entry {
 #ifndef syscall
 #   include <unistd.h>                  /* syscall() */
 #endif
-
-static inline long batch_flush()
-{
-	syscall(__NR_batch);
-}
 
 static inline long batch_register(struct batch_entry* table)
 {

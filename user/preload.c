@@ -2,8 +2,25 @@
 int curindex[MAX_THREAD_NUM];
 int table_size = 64;
 int main_thread_pid;
+int in_segment;
+
+long batch_start(){
+    in_segment = 1;
+    return 0;
+}
+
+long batch_flush(){
+    in_segment = 0;
+    return syscall(__NR_batch_flush);
+}
 
 int open(const char *pathname, int flags, mode_t mode) {
+
+    if(!in_segment){
+        real_open = real_open ? real_open : dlsym(RTLD_NEXT, "open");
+        return real_open(pathname, flags, mode);
+    }
+
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
@@ -22,6 +39,12 @@ int open(const char *pathname, int flags, mode_t mode) {
 }
 
 int close(int fd) {
+
+    if(!in_segment){
+        real_close = real_close ? real_close : dlsym(RTLD_NEXT, "close");
+        return real_close(fd);
+    }
+
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
@@ -37,6 +60,12 @@ int close(int fd) {
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
+
+    if(!in_segment){
+        real_write = real_write ? real_write : dlsym(RTLD_NEXT, "write");
+        return real_write(fd, buf, count);
+    }
+
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
@@ -55,6 +84,12 @@ ssize_t write(int fd, const void *buf, size_t count) {
 }
 
 ssize_t read(int fd, void *buf, size_t count) {
+
+    if(!in_segment){
+        real_read = real_read ? real_read : dlsym(RTLD_NEXT, "read");
+        return real_read(fd, buf, count);
+    }
+
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
@@ -74,6 +109,7 @@ ssize_t read(int fd, void *buf, size_t count) {
 __attribute__((constructor)) static void setup(void) {
     int i;
     size_t pgsize = getpagesize();
+    in_segment = 0;
 
     /* get pid of main thread */
     main_thread_pid = syscall(186);

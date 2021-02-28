@@ -87,8 +87,6 @@ asmlinkage long sys_register(const struct pt_regs *regs) {
 /* printk is only for debug usage */
 /* it will lower a lot performance */
 asmlinkage long sys_batch(const struct pt_regs *regs) {
-    unsigned long start = regs->di;
-    unsigned long end = regs->si;
     int j = current->pid - main_pid;
     unsigned long i = start_index[j];
 
@@ -146,16 +144,16 @@ static int __init mod_init(void) {
     allow_writes();
 
     /* backup */
-    sys_oldcall0 = scTab[__NR_batch];
+    sys_oldcall0 = scTab[__NR_batch_flush];
     sys_oldcall1 = scTab[__NR_register];
 
     /* hooking */
-    scTab[__NR_batch] = sys_batch;
+    scTab[__NR_batch_flush] = sys_batch;
     scTab[__NR_register] = sys_register;
 
     disallow_writes();
 
-    printk(KERN_INFO "batch: installed as %d\n", __NR_batch);
+    printk(KERN_INFO "batch: installed as %d\n", __NR_batch_flush);
 
     return 0;
 }
@@ -163,7 +161,7 @@ static void __exit mod_cleanup(void) {
     allow_writes();
 
     /* restore */
-    scTab[__NR_batch] = sys_oldcall0;
+    scTab[__NR_batch_flush] = sys_oldcall0;
     scTab[__NR_register] = sys_oldcall1;
 
     disallow_writes();

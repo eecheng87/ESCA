@@ -15,13 +15,14 @@ $ make
 ```
 
 ## Usage
-In dBatch, it's easier to use. The only thing need to do is add `batch_flush` which hints kernel start to batch.
+In dBatch, it's easier to use. The only thing need to do are adding `batch_start` and `batch_flush` which hint kernel where to start batching.
 
 Example:
 ```cpp
 #include <linux/batch.h>
 
 int main(int argc, char **argv) {
+    batch_start();
     int fd = open("test.txt", O_CREAT | O_WRONLY,
                    S_IWUSR | S_IRUSR | S_IRGRP | S_IWGRP | S_IROTH);
     write(fd, "hihi", 4);
@@ -48,7 +49,7 @@ So far, we only did simple experiment for measuring performance. Following is su
 
 ![](https://i.imgur.com/YMZBOgp.png)
 
-Although context switch is cheaper than mode transition, it still has overhead. Optimization of dBatch comes from less time to do mode transition. Mode transition has direct penalty and indirect penalty. The former is consist of executing the trap handler which copies the arguments from the registers to the kernel stack. The later is consist of TLB and cache miss.
+Although mode transition is cheaper than context switch, it still has overhead. Optimization of dBatch comes from less time to do mode transition. Mode transition has direct penalty and indirect penalty. The former is consist of executing the trap handler which copies the arguments from the registers to the kernel stack. The later is consist of TLB and cache miss.
 
 
 |  | IPC | L1-dcache-load-misses | dTLB-load-misses | cache-misses | page-faults |
