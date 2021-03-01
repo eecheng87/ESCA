@@ -5,7 +5,7 @@
 
 #include <dlfcn.h>
 #include <inttypes.h>
-#include <linux/batch.h>
+#include "../batch.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,3 +29,6 @@ typedef long (*write_t)(unsigned int fd, const char *buf, size_t count);
 write_t real_write;
 typedef long (*close_t)(int fd);
 close_t real_close;
+typedef long (*sendto_t)(int sockfd, void *buf, size_t len, unsigned flags,
+               struct sockaddr *dest_addr, int addrlen);
+sendto_t real_sendto;

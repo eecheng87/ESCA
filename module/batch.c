@@ -14,7 +14,7 @@
 
 MODULE_DESCRIPTION("Generic batch system call API");
 MODULE_AUTHOR("Steven Cheng");
-MODULE_LICENSE("MIT License");
+MODULE_LICENSE("GPL v2");
 
 struct page *pinned_pages[MAX_THREAD_NUM];
 

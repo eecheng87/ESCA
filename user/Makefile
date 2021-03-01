@@ -9,4 +9,4 @@ so:
 
 .PHONY: clean test preload.so
 clean:
-	rm -f *.o test preload.so libhello.so
+	rm -f *.o test preload.so libdummy.so
