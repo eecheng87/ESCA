@@ -6,15 +6,10 @@ VCFLAGS = /nologo /W3 /O2 /I../.. $(DEFS) $(EXTRA) /link /incremental:no /machin
 VC98 = docker run --rm -e Tmp=. -v $(ROOT):$(ROOT) -w $(CURDIR) docker.io/mdashnet/vc98
 
 all: $(PROG)
-	#$(DEBUGGER) ./$(PROG) $(ARGS)
-	LD_PRELOAD=$(PWD)/../../user/preload.so ./example
+	LD_PRELOAD=$(PWD)/../../../user/preload.so ./example
 
 $(PROG): main.c Makefile
-	#$(CC) ../../mongoose.c main.c -I../.. $(CFLAGS) -o $@
-	gcc ../../mongoose.c -I../.. -L$(PWD)/../../user -Wl,-rpath=$(PWD)/../../user -o example main.c -ldummy -lpthread
-
-mongoose.exe: main.c
-	$(VC98) wine cl ../../mongoose.c main.c $(VCFLAGS) ws2_32.lib /out:$@
+	gcc ../mongoose.c -I../ -L$(PWD)/../../../user -Wl,-rpath=$(PWD)/../../../user -o example main.c -ldummy -lpthread
 
 clean:
 	rm -rf $(PROG) *.o *.dSYM *.gcov *.gcno *.gcda *.obj *.exe *.ilk *.pdb mongoose mongoose_* mongoose.*

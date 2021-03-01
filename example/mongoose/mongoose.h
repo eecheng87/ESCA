@@ -40,7 +40,7 @@
 #define MG_ARCH_STM32 18
 #define MG_ARCH_FREERTOS 19
 
-#include "batch.h"
+#include "../../include/linux/batch.h"
 
 #if !defined(MG_ARCH)
 #if defined(TARGET_IS_MSP432P4XX) || defined(__MSP432P401R__)

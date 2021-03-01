@@ -150,7 +150,6 @@ __attribute__((constructor)) static void setup(void) {
     int i;
     size_t pgsize = getpagesize();
     in_segment = 0;
-    buffer_offset = 0;
 
     /* get pid of main thread */
     main_thread_pid = syscall(186);

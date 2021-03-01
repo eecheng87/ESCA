@@ -5,7 +5,7 @@
 
 #include <dlfcn.h>
 #include <inttypes.h>
-#include "../batch.h"
+#include "../include/linux/batch.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
