@@ -55,3 +55,7 @@ user/test.*
 user/test
 experiment/dwrite.c
 experiment/dwrite
+example/mongoose/http-server/test.jpg
+example/mongoose/http-client/ca.pem
+example/mongoose/http-server/example
+example/mongoose/http-client/example
