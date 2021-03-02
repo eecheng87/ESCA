@@ -3,6 +3,8 @@ int curindex[MAX_THREAD_NUM];
 int table_size = 64;
 int main_thread_pid;
 int in_segment;
+void *mpool; /* memory pool */
+int pool_offset;
 
 long batch_start() {
     in_segment = 1;
@@ -120,14 +122,17 @@ ssize_t sendto(int sockfd, void *buf, size_t len, unsigned flags,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
     off = toff << 6; /* 6 = log64 */
 
-    /* TODO: cleanup */
-    unsigned char *cpybuf = (unsigned char *)malloc(sizeof(unsigned char) * len);
+    if(pool_offset + (len / POOL_UNIT) >= MAX_POOL_SIZE)
+        pool_offset = 0;
+    else
+        pool_offset += (len / POOL_UNIT);
+    memcpy(mpool + pool_offset, buf, len);
 
     btable[off + curindex[toff]].sysnum = __NR_sendto;
     btable[off + curindex[toff]].rstatus = BENTRY_BUSY;
     btable[off + curindex[toff]].nargs = 6;
     btable[off + curindex[toff]].args[0] = sockfd;
-    btable[off + curindex[toff]].args[1] = (long)cpybuf/*(long)buf*/;
+    btable[off + curindex[toff]].args[1] = (long)(mpool + pool_offset);
     btable[off + curindex[toff]].args[2] = len;
     btable[off + curindex[toff]].args[3] = flags;
     btable[off + curindex[toff]].args[4] = (long)dest_addr;
@@ -136,8 +141,7 @@ ssize_t sendto(int sockfd, void *buf, size_t len, unsigned flags,
     curindex[toff] =
         (curindex[toff] == MAX_TABLE_SIZE - 1) ? 1 : curindex[toff] + 1;
 
-    memcpy(cpybuf, buf, len);
-
+    /* assume always success */
     return len;
 }
 
@@ -150,6 +154,10 @@ __attribute__((constructor)) static void setup(void) {
     int i;
     size_t pgsize = getpagesize();
     in_segment = 0;
+
+    /* init memory pool */
+    mpool = (void*)malloc(sizeof(unsigned char) * MAX_POOL_SIZE);
+    pool_offset = 0;
 
     /* get pid of main thread */
     main_thread_pid = syscall(186);
