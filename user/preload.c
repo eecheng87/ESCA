@@ -5,6 +5,7 @@ int main_thread_pid;
 int in_segment;
 void *mpool; /* memory pool */
 int pool_offset;
+int batch_num; /* number of busy entry */
 
 long batch_start() {
     in_segment = 1;
@@ -13,8 +14,11 @@ long batch_start() {
 
 long batch_flush() {
     in_segment = 0;
+
+    /* avoid useless batch_flush */
+    if(batch_num == 0)
+        return 0;
     return syscall(__NR_batch_flush);
-    /* TODO: cleanup cpybuf list or mem pool */
 }
 
 int open(const char *pathname, int flags, mode_t mode) {
@@ -23,6 +27,7 @@ int open(const char *pathname, int flags, mode_t mode) {
         real_open = real_open ? real_open : dlsym(RTLD_NEXT, "open");
         return real_open(pathname, flags, mode);
     }
+    batch_num++;
 
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
@@ -47,6 +52,7 @@ int close(int fd) {
         real_close = real_close ? real_close : dlsym(RTLD_NEXT, "close");
         return real_close(fd);
     }
+    batch_num++;
 
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
@@ -68,6 +74,7 @@ ssize_t write(int fd, const void *buf, size_t count) {
         real_write = real_write ? real_write : dlsym(RTLD_NEXT, "write");
         return real_write(fd, buf, count);
     }
+    batch_num++;
 
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
@@ -92,6 +99,7 @@ ssize_t read(int fd, void *buf, size_t count) {
         real_read = real_read ? real_read : dlsym(RTLD_NEXT, "read");
         return real_read(fd, buf, count);
     }
+    batch_num++;
 
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
@@ -109,7 +117,6 @@ ssize_t read(int fd, void *buf, size_t count) {
     return 0;
 }
 
-
 ssize_t sendto(int sockfd, void *buf, size_t len, unsigned flags,
                struct sockaddr *dest_addr, int addrlen) {
 
@@ -117,6 +124,7 @@ ssize_t sendto(int sockfd, void *buf, size_t len, unsigned flags,
         real_sendto = real_sendto ? real_sendto : dlsym(RTLD_NEXT, "sendto");
         return real_sendto(sockfd, buf, len, flags, dest_addr, addrlen);
     }
+    batch_num++;
 
     int off,
         toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
@@ -154,6 +162,7 @@ __attribute__((constructor)) static void setup(void) {
     int i;
     size_t pgsize = getpagesize();
     in_segment = 0;
+    batch_num = 0;
 
     /* init memory pool */
     mpool = (void*)malloc(sizeof(unsigned char) * MAX_POOL_SIZE);

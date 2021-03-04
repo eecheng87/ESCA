@@ -12,10 +12,10 @@ CFLAGS += -L$(OPENSSL)/lib -lssl -lcrypto
 endif
 
 all: $(PROG)
-	$(DEBUGGER) ./$(PROG) $(ARGS)
+	#$(DEBUGGER) ./$(PROG) $(ARGS)
 
 $(PROG): main.c
-	$(CC) ../mongoose.c -I../ -W -Wall $(CFLAGS) -o $(PROG) main.c
+	$(CC) ../mongoose.c -I../ -W -Wall $(CFLAGS) -o $(PROG) main.c  -lpthread
 
 clean:
 	rm -rf $(PROG) *.o *.dSYM *.gcov *.gcno *.gcda *.obj *.exe *.ilk *.pdb
