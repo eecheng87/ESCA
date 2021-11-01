@@ -4,6 +4,8 @@
 #include <asm/unistd.h>                 /* __NR_* */
 #define __NR_batch_flush  183    /* Hijack Andrew FS call slot for now */
 #define __NR_register 184               /* Do register routine before using batch */
+#define __NR_fpreg 403
+#define __NR_fpexit 404
 
 /* config Debug mode */
 #define DEBUG 0

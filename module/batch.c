@@ -1,7 +1,9 @@
+#include "../include/linux/batch.h"
 #include <generated/asm-offsets.h> /* __NR_syscall_max */
-#include <linux/batch.h>
+#include <linux/file.h>
+#include <linux/fs.h>
 #include <linux/kallsyms.h> /* kallsyms_lookup_name, __NR_* */
-#include <linux/kernel.h>   /* Basic Linux module headers */
+#include <linux/kernel.h> /* Basic Linux module headers */
 #include <linux/mm.h>
 #include <linux/module.h>
 #include <linux/pagemap.h>
@@ -16,7 +18,8 @@ MODULE_DESCRIPTION("Generic batch system call API");
 MODULE_AUTHOR("Steven Cheng");
 MODULE_LICENSE("GPL v2");
 
-struct page *pinned_pages[MAX_THREAD_NUM];
+struct page* pinned_pages[MAX_THREAD_NUM];
+struct page* pinned_pages2[MAX_THREAD_NUM];
 
 typedef asmlinkage long (*F0_t)(void);
 typedef asmlinkage long (*F1_t)(long);
@@ -49,98 +52,126 @@ indirect_call(void *f, int argc,
     return ((F1_t)f)((long)&regs);
 }
 
-static void **scTab = 0;
-struct batch_entry *batch_table[MAX_THREAD_NUM];
-int table_size = 64;
+static void** scTab = 0;
+struct batch_entry* batch_table[MAX_THREAD_NUM];
+struct batch_entry* b1[MAX_THREAD_NUM];
+struct batch_entry* b2[MAX_THREAD_NUM];
+
 int start_index[MAX_THREAD_NUM];
 int main_pid; /* PID of main thread */
 
-asmlinkage long sys_register(const struct pt_regs *regs) {
-    printk(KERN_INFO "Start register, address at regs is %p\n", regs);
-    int n_page, i, j;
+asmlinkage long sys_register(const struct pt_regs* regs)
+{
+    int n_page, i;
     unsigned long p1 = regs->di;
+    long wkr = regs->si;
+
+    printk(KERN_INFO "Start register, address at regs is %p\n", regs);
 
     /* map batch table from user-space to kernel */
     n_page = get_user_pages(
         (unsigned long)(p1), /* Start address to map */
-        MAX_THREAD_NUM, /* Number of pinned pages. 4096 btyes in this machine */
+        /*MAX_THREAD_NUM*/ 1, /* Number of pinned pages. 4096 btyes in this machine */
         FOLL_FORCE | FOLL_WRITE, /* Force flag */
-        pinned_pages,            /* struct page ** pointer to pinned pages */
+        &pinned_pages[wkr], /* struct page ** pointer to pinned pages */
         NULL);
-
-    for (i = 0; i < MAX_THREAD_NUM; i++)
-        batch_table[i] = (struct batch_entry *)kmap(pinned_pages[i]);
-
+#if 0
+n_page = get_user_pages(
+        (unsigned long)(p2), /* Start address to map */
+        /*MAX_THREAD_NUM*/ 1, /* Number of pinned pages. 4096 btyes in this machine */
+        FOLL_FORCE | FOLL_WRITE, /* Force flag */
+        &pinned_pages2[wkr],            /* struct page ** pointer to pinned pages */
+        NULL);
+#endif
+    //for (i = 0; i < MAX_THREAD_NUM; i++)
+    batch_table[wkr] = (struct batch_entry*)kmap(pinned_pages[wkr]);
+    //b1[wkr] = (struct batch_entry *)kmap(pinned_pages[wkr]);
+    //b2[wkr] = (struct batch_entry *)kmap(pinned_pages2[wkr]);
     /* initial table status */
-    for (j = 0; j < MAX_THREAD_NUM; j++)
-        for (i = 0; i < MAX_ENTRY_NUM; i++)
-            batch_table[j][i].rstatus = BENTRY_EMPTY;
+    //for (j = 0; j < MAX_THREAD_NUM; j++)
+    for (i = 0; i < MAX_ENTRY_NUM; i++)
+        batch_table[wkr][i].rstatus = BENTRY_EMPTY;
+#if 0
+for (i = 0; i < MAX_ENTRY_NUM; i++){
+        b1[wkr][i].rstatus = BENTRY_EMPTY;
+        b2[wkr][i].rstatus = BENTRY_EMPTY;
+}
+#endif
 
-    for (i = 0; i < MAX_THREAD_NUM; i++)
-        start_index[i] = 1;
-
-    main_pid = current->pid;
+    //for (i = 0; i < MAX_THREAD_NUM; i++)
+    start_index[wkr] = 1;
+    //batch_table[wkr] = b1[wkr];
+    //main_pid = current->pid;
 
     return 0;
 }
 
 /* printk is only for debug usage */
 /* it will lower a lot performance */
-asmlinkage long sys_batch(const struct pt_regs *regs) {
-    int j = current->pid - main_pid;
+int infd = -1;
+asmlinkage long sys_batch(const struct pt_regs* regs)
+{
+    int j = regs->di;
     unsigned long i = start_index[j];
-
+    //int infd = -1;
 #if DEBUG
-    printk(KERN_INFO "Start flushing, called from %d\n", main_pid + j);
+    printk(KERN_INFO "Start flushing (at [%d][%lu]), called from %d\n", j, i, j);
 #endif
     while (batch_table[j][i].rstatus == BENTRY_BUSY) {
-#if DEBUG
-        printk(KERN_INFO "Index %ld do syscall %d\n", i,
-               batch_table[j][i].sysnum);
-#endif
-        switch (batch_table[j][i].sysnum) {
-        case __NR_write:
-        case __NR_read:
-        case __NR_close: {
-            int fd = batch_table[j][i].args[0];
-            batch_table[j][i].args[0] =
-                fd < 0 ? batch_table[j][-fd].sysret : fd;
-            break;
-        }
-        default:
-            break;
-        }
-        batch_table[j][i].sysret =
-            indirect_call(scTab[batch_table[j][i].sysnum],
-                          batch_table[j][i].nargs, batch_table[j][i].args);
+        batch_table[j][i].sysret = indirect_call(scTab[batch_table[j][i].sysnum],
+            batch_table[j][i].nargs, batch_table[j][i].args);
         batch_table[j][i].rstatus = BENTRY_EMPTY;
+
+#if DEBUG
+        printk(KERN_INFO "syscall(%d, %ld,%ld,%ld,%ld);ret = %d\n", batch_table[j][i].sysnum, batch_table[j][i].args[0], batch_table[j][i].args[1], batch_table[j][i].args[2], batch_table[j][i].args[3], batch_table[j][i].sysret);
+#endif
         i = (i == 63) ? 1 : i + 1;
+#if 0
+	if(i == 63){
+                i=1;
+                batch_table[j] = batch_table[j] == b1[j] ? b2[j] : b1[j];
+#if DEBUG
+        printk(KERN_INFO "\nChange table to %p\n", batch_table[j]);
+#endif
+        }else{
+                i++;
+        }
+#endif
     }
     start_index[j] = i;
     return 0;
 }
 
+#if defined(__x86_64__)
 extern unsigned long __force_order __weak;
-#define store_cr0(x) asm volatile("mov %0,%%cr0" : "+r"(x), "+m"(__force_order))
-static void allow_writes(void) {
+#define store_cr0(x) asm volatile("mov %0,%%cr0" \
+                                  : "+r"(x), "+m"(__force_order))
+static void allow_writes(void)
+{
     unsigned long cr0 = read_cr0();
     clear_bit(16, &cr0);
     store_cr0(cr0);
 }
-static void disallow_writes(void) {
+static void disallow_writes(void)
+{
     unsigned long cr0 = read_cr0();
     set_bit(16, &cr0);
     store_cr0(cr0);
 }
+#elif defined(__aarch64__)
+// skip
+#endif
 
-void *sys_oldcall0;
-void *sys_oldcall1;
+void* sys_oldcall0;
+void* sys_oldcall1;
+void* syscall_emp_ori;
+void* syscall_emp_ori2;
 
-static int __init mod_init(void) {
+static int __init mod_init(void)
+{
 
     /* hook system call */
-    scTab = (void **)(smSCTab + ((char *)&system_wq - smSysWQ));
-
+    scTab = (void**)(smSCTab + ((char*)&system_wq - smSysWQ));
     allow_writes();
 
     /* backup */
@@ -157,7 +188,8 @@ static int __init mod_init(void) {
 
     return 0;
 }
-static void __exit mod_cleanup(void) {
+static void __exit mod_cleanup(void)
+{
     allow_writes();
 
     /* restore */
