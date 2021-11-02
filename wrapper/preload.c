@@ -16,7 +16,6 @@ long batch_start(int events)
     if (!btable) {
         int pgsize = getpagesize();
         btable = (struct batch_entry*)aligned_alloc(pgsize, pgsize);
-        //toff = (((struct pthread_fake *)pthread_self())->tid - main_thread_pid);
         toff = syscall(39) - main_thread_pid;
         toff -= 1;
         printf("Register table %d\n", toff);
@@ -68,7 +67,7 @@ ssize_t sendfile64(int outfd, int infd, off_t* offset, size_t count)
     btable[curindex].nargs = 4;
     btable[curindex].args[0] = outfd;
     btable[curindex].args[1] = infd;
-    btable[curindex].args[2] = /*offset*/ 0;
+    btable[curindex].args[2] = 0;
     btable[curindex].args[3] = count;
     curindex = (curindex == MAX_TABLE_SIZE - 1) ? 1 : curindex + 1;
     if (batch_num > BATCH_NUM)
@@ -87,13 +86,4 @@ __attribute__((constructor)) static void setup(void)
 
     /* get pid of main thread */
     main_thread_pid = syscall(39);
-
-    //btable =
-    //  (struct batch_entry *)aligned_alloc(pgsize, pgsize * MAX_THREAD_NUM);
-
-    //syscall(__NR_register, btable);
-    //signal(SIGINT, ctrl_c_hdlr);
-
-    //for (i = 0; i < MAX_THREAD_NUM; i++)
-    //  curindex[i] = 1;
 }

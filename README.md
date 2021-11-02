@@ -1,65 +1,70 @@
-# dBatch
-This project takes the concept of c-blake's [batch](https://github.com/c-blake/batch). By decreasing the times switching between kernel and user mode, we expected to increase the performance by batching system calls.
+# How to deploy ESCA to Nginx
+This branch gives code, which can simply show how nginx-esca effectively improve throughput (this version only works for x86)
 
-## Build
-build kernel module `batch`
-```shell
-$ cd module
-$ sudo ./build
-$ sudo insmod batch.ko
+## Prerequisite
+For Nginx
 ```
-build pre-load library
-```shell
-$ cd user
-$ make
+sudo apt-get install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev libgd-dev libxml2 libxml2-dev uuid-dev
 ```
 
-## Usage
-In dBatch, it's easier to use. The only thing need to do are adding `batch_start` and `batch_flush` which hint kernel where to start batching.
-
-Example:
-```cpp
-#include <linux/batch.h>
-
-int main(int argc, char **argv) {
-    batch_start();
-    int fd = open("test.txt", O_CREAT | O_WRONLY,
-                   S_IWUSR | S_IRUSR | S_IRGRP | S_IWGRP | S_IROTH);
-    write(fd, "hihi", 4);
-    write(1, "hihi", 4);
-    close(fd);
-    batch_flush();
-    return 0;
-}
+For wrk
 ```
-Application is needed to be compiled with link flag `lpthread` and be executed with preload lib as prefix:
-```shell
-$ LD_PRELOAD=$PWD/preload.so ./test
+sudo apt-get install build-essential libssl-dev git -y
 ```
 
-More examples can be found under `/example`.
+## Download project
+```
+git clone https://github.com/eecheng87/dBatch.git
+cd dBatch
+git checkout origin/ngx-demo
+```
 
-## Feature
-* Support interleaved non-syscall between syscalls
-* Support loop
-* Support multi-thread batching (not portable, only for POSIX & linux glibc)
+## Build experimental target
+Build `wrk`
+```
+sudo make wrk
+```
+Download & configure nginx
+```
+make nginx
+```
 
-## Performance
-So far, we only did simple experiment for measuring performance. Following is summary of experiment, we did 60 times experiment as x-axis. In each iteration, we did 60 times consecutive `write` in three methods.
-
-![](https://i.imgur.com/YMZBOgp.png)
-
-Although mode transition is cheaper than context switch, it still has overhead. Optimization of dBatch comes from less time to do mode transition. Mode transition has direct penalty and indirect penalty. The former is consist of executing the trap handler which copies the arguments from the registers to the kernel stack. The later is consist of TLB and cache miss.
-
-
-|  | IPC | L1-dcache-load-misses | dTLB-load-misses | cache-misses | page-faults |
-| -------- | -------- | -------- | -------- | -------- | -------- |
-| Normal   | 0.42 | 5,8851 | 33 | 1,1330 | 55 |
-| dBatch   | 2.16 | 3167 | 17 | 9471 | 48 |
+## Build ESCA
+Compile files under `/module` and `/wrapper`
+```
+sudo make
+```
 
 
+## Modify Nginx
+1. sudo vim downloads/nginx-1.20.0/objs/Makefile
+    * Remove `-Werror` in CFLAGS
+    * append absolute path of `libdummy.so` (e.g. /home/wrapper/libdummy.so) to the tail of `$(LINK)`
 
-Relative experiments can be found under `/experiment`
+2. vim downloads/nginx-1.20.0/src/event/modules/ngx_epoll_module.c
+    * add `batch_start();` at line: 835
+    * add `batch_flush();` at line: 934
 
-## Relative project
-c-blake - [batch](https://github.com/c-blake/batch)
+After above modification, compile nginx:
+```
+make nginx-build
+```
+Last, replace `dBatch/conf/nginx.conf` with `dBatch/nginx.conf` (make sure root path in line: 19 be set properly, we provide several static files under `/web`).
+
+## Testing
+
+### Lauch Nginx
+Choose either
+```
+make nginx-launch # origin nginx
+```
+or
+```
+make insert # insert kernel module
+make nginx-esca-launch # nginx-esca
+```
+
+### Benchmarking
+```
+./downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
+```

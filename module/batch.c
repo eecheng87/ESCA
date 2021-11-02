@@ -75,33 +75,12 @@ asmlinkage long sys_register(const struct pt_regs* regs)
         FOLL_FORCE | FOLL_WRITE, /* Force flag */
         &pinned_pages[wkr], /* struct page ** pointer to pinned pages */
         NULL);
-#if 0
-n_page = get_user_pages(
-        (unsigned long)(p2), /* Start address to map */
-        /*MAX_THREAD_NUM*/ 1, /* Number of pinned pages. 4096 btyes in this machine */
-        FOLL_FORCE | FOLL_WRITE, /* Force flag */
-        &pinned_pages2[wkr],            /* struct page ** pointer to pinned pages */
-        NULL);
-#endif
-    //for (i = 0; i < MAX_THREAD_NUM; i++)
+
     batch_table[wkr] = (struct batch_entry*)kmap(pinned_pages[wkr]);
-    //b1[wkr] = (struct batch_entry *)kmap(pinned_pages[wkr]);
-    //b2[wkr] = (struct batch_entry *)kmap(pinned_pages2[wkr]);
-    /* initial table status */
-    //for (j = 0; j < MAX_THREAD_NUM; j++)
     for (i = 0; i < MAX_ENTRY_NUM; i++)
         batch_table[wkr][i].rstatus = BENTRY_EMPTY;
-#if 0
-for (i = 0; i < MAX_ENTRY_NUM; i++){
-        b1[wkr][i].rstatus = BENTRY_EMPTY;
-        b2[wkr][i].rstatus = BENTRY_EMPTY;
-}
-#endif
 
-    //for (i = 0; i < MAX_THREAD_NUM; i++)
     start_index[wkr] = 1;
-    //batch_table[wkr] = b1[wkr];
-    //main_pid = current->pid;
 
     return 0;
 }
@@ -113,7 +92,6 @@ asmlinkage long sys_batch(const struct pt_regs* regs)
 {
     int j = regs->di;
     unsigned long i = start_index[j];
-    //int infd = -1;
 #if DEBUG
     printk(KERN_INFO "Start flushing (at [%d][%lu]), called from %d\n", j, i, j);
 #endif
@@ -126,17 +104,6 @@ asmlinkage long sys_batch(const struct pt_regs* regs)
         printk(KERN_INFO "syscall(%d, %ld,%ld,%ld,%ld);ret = %d\n", batch_table[j][i].sysnum, batch_table[j][i].args[0], batch_table[j][i].args[1], batch_table[j][i].args[2], batch_table[j][i].args[3], batch_table[j][i].sysret);
 #endif
         i = (i == 63) ? 1 : i + 1;
-#if 0
-	if(i == 63){
-                i=1;
-                batch_table[j] = batch_table[j] == b1[j] ? b2[j] : b1[j];
-#if DEBUG
-        printk(KERN_INFO "\nChange table to %p\n", batch_table[j]);
-#endif
-        }else{
-                i++;
-        }
-#endif
     }
     start_index[j] = i;
     return 0;
