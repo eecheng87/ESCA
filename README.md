@@ -26,7 +26,7 @@ sudo make wrk
 ```
 Download & configure nginx
 ```
-make nginx
+sudo make nginx
 ```
 
 ## Build ESCA
@@ -41,7 +41,7 @@ sudo make
     * Remove `-Werror` in CFLAGS
     * append absolute path of `libdummy.so` (e.g. /home/wrapper/libdummy.so) to the tail of `$(LINK)`
 
-2. vim downloads/nginx-1.20.0/src/event/modules/ngx_epoll_module.c
+2. sudo vim downloads/nginx-1.20.0/src/event/modules/ngx_epoll_module.c
     * add `batch_start();` at line: 835
     * add `batch_flush();` at line: 934
 
@@ -49,7 +49,10 @@ After above modification, compile nginx:
 ```
 make nginx-build
 ```
-Last, replace `dBatch/conf/nginx.conf` with `dBatch/nginx.conf` (make sure root path in line: 19 be set properly, we provide several static files under `/web`).
+Last, replace `/usr/local/nginx/conf/nginx.conf` with `nginx.conf` (make sure root path in line: 19 of nginx.conf be set properly, we provide several static files under `/web`):
+```
+sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
+```
 
 ## Testing
 

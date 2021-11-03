@@ -27,7 +27,7 @@ $(NGX):
 	mkdir $(NGX_PATH)
 	tar -zxvf $(NGX_NAME).tar.gz -C $(OUT)
 	rm $(NGX_NAME).tar.gz
-	cd $(NGX_PATH) && sudo ./configure --prefix=/var/www/html --sbin-path=/usr/sbin/nginx --conf-path=/home/eecheng/Desktop/dBatch/conf/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=/var/log/nginx/error.log --with-pcre  --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --with-http_ssl_module --with-http_image_filter_module=dynamic --modules-path=/etc/nginx/modules --with-http_v2_module --with-stream=dynamic --with-http_addition_module
+	cd $(NGX_PATH) && sudo ./configure --with-pcre --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --with-http_ssl_module --with-http_image_filter_module=dynamic --modules-path=/etc/nginx/modules --with-http_v2_module --with-stream=dynamic --with-http_addition_module
 
 nginx-build:
 	cd $(NGX_PATH) && sudo make && \
