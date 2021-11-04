@@ -1,0 +1,20 @@
+--- old/nginx-1.20.0/src/event/modules/ngx_epoll_module.c	2021-04-20 21:35:47.000000000 +0800
++++ new/nginx-1.20.0/src/event/modules/ngx_epoll_module.c	2021-11-04 06:34:52.980525017 +0800
+@@ -832,7 +832,7 @@
+                       "epoll_wait() returned no events without timeout");
+         return NGX_ERROR;
+     }
+-
++batch_start();
+     for (i = 0; i < events; i++) {
+         c = event_list[i].data.ptr;
+
+@@ -931,7 +931,7 @@
+             }
+         }
+     }
+-
++batch_flush();
+     return NGX_OK;
+ }
+

@@ -8,6 +8,8 @@ NGX_NAME := nginx-1.20.0
 NGX_PATH := downloads/$(NGX_NAME)
 NGX := nginx
 
+LIBDUMMY_PATH := $(shell find $(shell pwd) -type f -name "libdummy.so") | sed 's_/_\\/_g'
+
 OUT := downloads
 
 all: module wrapper
@@ -27,7 +29,10 @@ $(NGX):
 	mkdir $(NGX_PATH)
 	tar -zxvf $(NGX_NAME).tar.gz -C $(OUT)
 	rm $(NGX_NAME).tar.gz
-	cd $(NGX_PATH) && sudo ./configure --with-pcre --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --with-http_ssl_module --with-http_image_filter_module=dynamic --modules-path=/etc/nginx/modules --with-http_v2_module --with-stream=dynamic --with-http_addition_module
+	cd $(NGX_PATH) && ./configure
+	sed -i 's/-Werror//' objs/Makefile
+	sed -i 's/-Wl,-E/-Wl,-E $(LIBDUMMY_PATH)/' objs/Makefile
+	cd $(OUT) && patch -p1 < ../ngx.patch
 
 nginx-build:
 	cd $(NGX_PATH) && sudo make && \
@@ -56,4 +61,3 @@ clean:
 	rm -rf $(NGX_PATH)
 	$(MAKE) -C module $(MAKECMDGOALS)
 	$(MAKE) -C wrapper $(MAKECMDGOALS)
-
