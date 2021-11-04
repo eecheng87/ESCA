@@ -30,7 +30,7 @@ make config TARGET=lighttpd
 ```
 
 ## Build ESCA
-Compile files under `/module` and `/wrapper`
+Compile files under `/module` and `/wrapper` (This step must be taken before next step)
 ```
 sudo make
 ```
