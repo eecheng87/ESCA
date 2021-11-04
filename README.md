@@ -1,5 +1,5 @@
-# How to deploy ESCA to Nginx
-This branch gives code which can simply show how nginx-esca effectively improve throughput (this version only works for x86)
+# How to deploy ESCA to Nginx and lighttpd
+This branch gives code which can simply show how nginx-esca and lighttpd-esca effectively improve throughput (this version only works for x86)
 
 ## Prerequisite
 For Nginx
@@ -19,7 +19,7 @@ cd dBatch
 git checkout origin/ngx-demo
 ```
 
-## Config Demo target
+## Config demo target
 Choose either Nginx:
 ```
 make config TARGET=nginx
@@ -81,3 +81,8 @@ make lighttpd-esca-launch # lighttpd-esca
 ![image](https://github.com/eecheng87/dBatch/blob/ngx-demo/demo.gif)
 
 Nginx-ESCA shows 11% improvement compared with Nginx
+
+![image](https://github.com/eecheng87/dBatch/blob/ngx-demo/light-demo.gif)
+
+lighttpd-ESCA shows 13% improvement compared with lighttpd
+
