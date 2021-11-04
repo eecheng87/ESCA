@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/uio.h>
 //#include <sys/stat.h>
 //#include <sys/auxv.h>
 //#include <sys/mman.h>
@@ -28,21 +29,12 @@ struct pthread_fake {
 };
 
 extern struct batch_entry* btable;
-//extern int curindex[MAX_THREAD_NUM];
-extern int curindex;
 
-typedef long (*open_t)(const char* pathname, int flags, mode_t mode);
-open_t real_open;
-typedef long (*read_t)(int fd, void* buf, size_t count);
-read_t real_read;
-typedef long (*write_t)(unsigned int fd, const char* buf, size_t count);
-write_t real_write;
 typedef long (*close_t)(int fd);
 close_t real_close;
-//typedef long (*sendto_t)(int sockfd, void *buf, size_t len, unsigned flags,
-//               struct sockaddr *dest_addr, int addrlen);
-//sendto_t real_sendto;
 typedef long (*sendfile_t)(int outfd, int infd, off_t* offset, size_t count);
 sendfile_t real_sendfile;
-//typedef int (*epoll_wait_t)(int, struct epoll_event*, int, int);
-//epoll_wait_t real_ep_w;
+typedef long (*shutdown_t)(int fd, int how);
+shutdown_t real_shutdown;
+typedef long (*writev_t)(int fd, const struct iovec *iov, int iovcnt);
+writev_t real_writev;

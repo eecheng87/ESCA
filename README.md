@@ -1,5 +1,5 @@
 # How to deploy ESCA to Nginx
-This branch gives code, which can simply show how nginx-esca effectively improve throughput (this version only works for x86)
+This branch gives code which can simply show how nginx-esca effectively improve throughput (this version only works for x86)
 
 ## Prerequisite
 For Nginx
@@ -19,6 +19,16 @@ cd dBatch
 git checkout origin/ngx-demo
 ```
 
+## Config Demo target
+Choose either Nginx:
+```
+make config TARGET=nginx
+```
+or lighttpd:
+```
+make config TARGET=lighttpd
+```
+
 ## Build ESCA
 Compile files under `/module` and `/wrapper`
 ```
@@ -34,10 +44,14 @@ Download & configure nginx
 ```
 sudo make nginx
 ```
+Download & build lighttpd
+```
+sudo make lighttpd
+```
 
 ## Testing
 
-### Lauch Nginx
+### Launch Nginx
 Choose either
 ```
 make nginx-launch # origin nginx
@@ -47,10 +61,20 @@ or
 make insert # insert kernel module
 make nginx-esca-launch # nginx-esca
 ```
+### Launch lighttpd
+Choose either
+```
+make lighttpd-launch # origin lighttpd
+```
+or
+```
+make insert # insert kernel module
+make lighttpd-esca-launch # lighttpd-esca
+```
 
 ### Benchmarking
 ```
-# nginx is at port 8081
+# nginx is at port 8081; lighttpd is at port 3000
 ./downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
 ```
 ### Demo
