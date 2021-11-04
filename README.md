@@ -19,6 +19,12 @@ cd dBatch
 git checkout origin/ngx-demo
 ```
 
+## Build ESCA
+Compile files under `/module` and `/wrapper`
+```
+sudo make
+```
+
 ## Build experimental target
 Build `wrk`
 ```
@@ -27,31 +33,6 @@ sudo make wrk
 Download & configure nginx
 ```
 sudo make nginx
-```
-
-## Build ESCA
-Compile files under `/module` and `/wrapper`
-```
-sudo make
-```
-
-
-## Modify Nginx
-1. sudo vim downloads/nginx-1.20.0/objs/Makefile
-    * Remove `-Werror` in CFLAGS
-    * append absolute path of `libdummy.so` (e.g. /home/wrapper/libdummy.so) to the tail of `$(LINK)`
-
-2. sudo vim downloads/nginx-1.20.0/src/event/modules/ngx_epoll_module.c
-    * add `batch_start();` at line: 835
-    * add `batch_flush();` at line: 934
-
-After above modification, compile nginx:
-```
-make nginx-build
-```
-Last, replace `/usr/local/nginx/conf/nginx.conf` with `nginx.conf` (make sure root path in line: 19 of nginx.conf be set properly, we provide several static files under `/web`):
-```
-sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
 ```
 
 ## Testing
@@ -69,6 +50,7 @@ make nginx-esca-launch # nginx-esca
 
 ### Benchmarking
 ```
+# nginx is at port 8081
 ./downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
 ```
 ### Demo

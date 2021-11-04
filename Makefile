@@ -30,13 +30,11 @@ $(NGX):
 	tar -zxvf $(NGX_NAME).tar.gz -C $(OUT)
 	rm $(NGX_NAME).tar.gz
 	cd $(NGX_PATH) && ./configure
-	sed -i 's/-Werror//' objs/Makefile
-	sed -i 's/-Wl,-E/-Wl,-E $(LIBDUMMY_PATH)/' objs/Makefile
+	sh ngx.sh $(NGX_PATH)
 	cd $(OUT) && patch -p1 < ../ngx.patch
-
-nginx-build:
-	cd $(NGX_PATH) && sudo make && \
+	cd $(NGX_PATH) && make && \
 	sudo make install
+	sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
 
 nginx-launch:
 	sudo ./downloads/nginx-1.20.0/objs/nginx
