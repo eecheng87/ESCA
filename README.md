@@ -78,11 +78,11 @@ make lighttpd-esca-launch # lighttpd-esca
 ./downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
 ```
 ### Demo
-![image](https://github.com/eecheng87/dBatch/blob/ngx-demo/demo.gif)
+![image](https://github.com/eecheng87/dBatch/blob/preview/demo.gif)
 
 Nginx-ESCA shows 11% improvement compared with Nginx
 
-![image](https://github.com/eecheng87/dBatch/blob/ngx-demo/light-demo.gif)
+![image](https://github.com/eecheng87/dBatch/blob/preview/light-demo.gif)
 
 lighttpd-ESCA shows 13% improvement compared with lighttpd
 
