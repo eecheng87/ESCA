@@ -82,15 +82,14 @@ make lighttpd-esca-launch # lighttpd-esca
 ### Benchmarking
 ```
 # nginx is at port 8081; lighttpd is at port 3000
-./downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
+downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
 ```
 
 ### Demo
 ![image](https://github.com/eecheng87/dBatch/blob/preview/demo.gif)
 
-Nginx-ESCA shows 11% improvement compared with Nginx
+Nginx-ESCA shows 11% improvements over vanilla Nginx.
 
 ![image](https://github.com/eecheng87/dBatch/blob/preview/light-demo.gif)
 
-lighttpd-ESCA shows 13% improvement compared with lighttpd
-
+lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
