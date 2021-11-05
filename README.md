@@ -63,7 +63,7 @@ make nginx-launch # origin nginx
 or
 
 ```shell
-make insert # insert kernel module
+make load-lkm
 make nginx-esca-launch # nginx-esca
 ```
 
@@ -75,7 +75,7 @@ make lighttpd-launch # origin lighttpd
 or
 
 ```shell
-make insert # insert kernel module
+make load-lkm
 make lighttpd-esca-launch # lighttpd-esca
 ```
 

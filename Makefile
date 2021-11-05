@@ -83,10 +83,10 @@ module:
 wrapper:
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
-insert:
+load-lkm:
 	sudo insmod module/batch.ko
 
-rmmod:
+unload-lkm:
 	sudo rmmod batch
 
 clean:
