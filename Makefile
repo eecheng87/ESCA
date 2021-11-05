@@ -78,10 +78,10 @@ lighttpd-esca-launch:
 	LD_PRELOAD=wrapper/preload.so ./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
 
 module:
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
 
 wrapper:
-	$(MAKE) -C $@ $(MAKECMDGOALS)
+	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
 
 load-lkm:
 	sudo insmod module/batch.ko

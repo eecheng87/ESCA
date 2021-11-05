@@ -3,7 +3,7 @@
 The main objective of this work is to reduce the per-syscall overhead through
 an advanced form of syscall aggregation, which is more flexible and applicable
 to service-oriented scenarios, offering full compatibility with the existing
-OS kernels and syscall interfaces. 
+OS kernels and syscall interfaces.
 
 This branch illustrates how Nginx and lighttpd benefit from ESCA.
 
@@ -34,13 +34,13 @@ make config TARGET=lighttpd
 ## Build ESCA
 Compile files under `/module` and `/wrapper` (This step must be taken before next step)
 ```shell
-sudo make
+make
 ```
 
 ## Build experimental target
 Build `wrk`
 ```shell
-sudo make wrk
+make wrk
 ```
 
 Download & configure nginx
@@ -50,7 +50,7 @@ make nginx
 
 Download & build lighttpd
 ```shell
-sudo make lighttpd
+make lighttpd
 ```
 
 ## Testing
