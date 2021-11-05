@@ -52,7 +52,7 @@ $(NGX):
 	cd $(OUT) && patch -p1 < ../patches/ngx.patch
 	cd $(NGX_PATH) && make && \
 	make install
-	cp nginx.conf local/conf/nginx.conf
+	cp -f configs/nginx.conf local/conf/nginx.conf
 
 $(LIGHTY):
 	@echo "download lighttpd..."
@@ -63,7 +63,7 @@ $(LIGHTY):
 	scripts/lighttpd.sh $(LIGHTY_PATH)
 	cd $(OUT) && patch -p1 < ../patches/lighttpd.patch
 	cd $(LIGHTY_PATH) && sudo make install
-	cp lighttpd.conf $(LIGHTY_PATH)/src/lighttpd.conf
+	cp -f configs/lighttpd.conf $(LIGHTY_PATH)/src/lighttpd.conf
 
 nginx-launch:
 	./downloads/nginx-1.20.0/objs/nginx
