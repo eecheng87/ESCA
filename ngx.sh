@@ -1,5 +1,5 @@
 #!/bin/bash
-libpath=$(find $(pwd) -type f -name "libdummy.so" | sed 's_/_\\/_g')
+libpath=$(find $(pwd) -type f -name "libshim.so" | sed 's_/_\\/_g')
 webpath=$(readlink --canonicalize web | sed 's_/_\\/_g')
 ngxpath=$1
 
