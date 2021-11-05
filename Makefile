@@ -48,7 +48,7 @@ $(NGX):
 	rm $(NGX_NAME).tar.gz
 	mkdir local
 	cd $(NGX_PATH) && ./configure --prefix=$(PWD)/local
-	sh ngx.sh $(NGX_PATH)
+	scripts/ngx.sh $(NGX_PATH)
 	cd $(OUT) && patch -p1 < ../patches/ngx.patch
 	cd $(NGX_PATH) && make && \
 	make install
@@ -60,7 +60,7 @@ $(LIGHTY):
 	tar -zxvf $(LIGHTY_ZIP_NAME).tar.gz -C $(OUT)
 	rm $(LIGHTY_ZIP_NAME).tar.gz
 	cd $(LIGHTY_PATH) && ./autogen.sh && ./configure
-	sh lighttpd.sh $(LIGHTY_PATH)
+	scripts/lighttpd.sh $(LIGHTY_PATH)
 	cd $(OUT) && patch -p1 < ../patches/lighttpd.patch
 	cd $(LIGHTY_PATH) && sudo make install
 	cp lighttpd.conf $(LIGHTY_PATH)/src/lighttpd.conf
