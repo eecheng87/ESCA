@@ -15,6 +15,7 @@ LIGHTY_PATH := downloads/$(LIGHTY_NAME)
 LIGHTY := lighttpd
 
 LIBDUMMY_PATH := $(shell find $(shell pwd) -type f -name "libdummy.so") | sed 's_/_\\/_g'
+PWD := $(shell pwd)
 
 OUT := downloads
 
@@ -45,12 +46,13 @@ $(NGX):
 	mkdir $(NGX_PATH)
 	tar -zxvf $(NGX_NAME).tar.gz -C $(OUT)
 	rm $(NGX_NAME).tar.gz
-	cd $(NGX_PATH) && ./configure
+	mkdir local
+	cd $(NGX_PATH) && ./configure --prefix=$(PWD)/local
 	sh ngx.sh $(NGX_PATH)
 	cd $(OUT) && patch -p1 < ../ngx.patch
 	cd $(NGX_PATH) && make && \
-	sudo make install
-	sudo cp nginx.conf /usr/local/nginx/conf/nginx.conf
+	make install
+	cp nginx.conf local/conf/nginx.conf
 
 $(LIGHTY):
 	@echo "download lighttpd..."
@@ -64,10 +66,10 @@ $(LIGHTY):
 	cp lighttpd.conf $(LIGHTY_PATH)/src/lighttpd.conf
 
 nginx-launch:
-	sudo ./downloads/nginx-1.20.0/objs/nginx
+	./downloads/nginx-1.20.0/objs/nginx
 
 nginx-esca-launch:
-	sudo LD_PRELOAD=wrapper/preload.so ./downloads/nginx-1.20.0/objs/nginx
+	LD_PRELOAD=wrapper/preload.so ./downloads/nginx-1.20.0/objs/nginx
 
 lighttpd-launch:
 	./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
@@ -91,6 +93,7 @@ clean:
 	rm -rf $(WRK_PATH)
 	rm -rf $(NGX_PATH)
 	rm -rf $(LIGHTY_PATH)
+	rm -rf local
 	rm wrapper/preload.c
 	rm module/batch.c
 	$(MAKE) -C module $(MAKECMDGOALS)

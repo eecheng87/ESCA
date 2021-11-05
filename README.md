@@ -42,7 +42,7 @@ sudo make wrk
 ```
 Download & configure nginx
 ```
-sudo make nginx
+make nginx
 ```
 Download & build lighttpd
 ```
