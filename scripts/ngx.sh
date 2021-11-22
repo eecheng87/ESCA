@@ -7,4 +7,4 @@ ngxpath=$1
 # modify nginx
 sed -i 's/-Werror//' ${ngxpath}/objs/Makefile
 sed -i "s/-Wl,-E/-Wl,-E ${libpath}/" ${ngxpath}/objs/Makefile
-sed -i "19s/root.*;/root ${webpath};/" nginx.conf
+sed -i "19s/root.*;/root ${webpath};/" configs/nginx.conf
