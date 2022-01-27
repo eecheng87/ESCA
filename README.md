@@ -16,8 +16,8 @@ sudo apt install libssl-dev libgd-dev libxml2 libxml2-dev uuid-dev
 
 ## Download project
 ```shell
-git clone https://github.com/eecheng87/dBatch.git -b preview
-cd dBatch
+git clone https://github.com/eecheng87/ESCA.git -b preview
+cd ESCA
 ```
 
 ## Config demo target
