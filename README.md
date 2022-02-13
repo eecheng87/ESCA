@@ -12,6 +12,7 @@ For Nginx and wrk:
 ```shell
 sudo apt install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev
 sudo apt install libssl-dev libgd-dev libxml2 libxml2-dev uuid-dev
+sudo apt install autoconf automake libtool
 ```
 
 ## Download project
