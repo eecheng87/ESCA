@@ -16,7 +16,7 @@ sudo apt install libssl-dev libgd-dev libxml2 libxml2-dev uuid-dev
 
 ## Download project
 ```shell
-git clone https://github.com/eecheng87/ESCA.git -b preview
+git clone https://github.com/eecheng87/ESCA.git
 cd ESCA
 ```
 
