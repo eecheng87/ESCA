@@ -80,6 +80,12 @@ make load-lkm
 make lighttpd-esca-launch # lighttpd-esca
 ```
 
+### Download workloads
+```shell
+git submodule init
+git submodule update
+```
+
 ### Benchmarking
 ```
 # nginx is at port 8081; lighttpd is at port 3000
