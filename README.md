@@ -100,3 +100,20 @@ Nginx-ESCA shows 11% improvements over vanilla Nginx.
 ![image](https://github.com/eecheng87/dBatch/blob/preview/assets/light-demo.gif)
 
 lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
+
+### Referencing our work
+ESCA: Effective System Call Aggregation for Event-Driven Servers
+
+*Yu-Cheng Cheng, Ching-Chun Jim Huang, Chia-Heng Tu*
+
+PDP 2022: [paper](https://ieeexplore.ieee.org/abstract/document/9756707?casa_token=FNEPLSTw9zoAAAAA:j19CRSIwB5a74niRUUlwKVTJlpe55wCPNkYlzbn55T5r3ISrm3SnqGkujaCsX8qHPT8Gi27iFA)
+```
+@INPROCEEDINGS{9756707,
+    author={Cheng, Yu-Cheng and Huang, Ching-Chun Jim and Tu, Chia-Heng},
+    booktitle={2022 30th Euromicro International Conference on Parallel, Distributed and Network-based Processing (PDP)},
+    title={ESCA: Effective System Call Aggregation for Event-Driven Servers},
+    year={2022},
+    pages={18-25},
+    doi={10.1109/PDP55904.2022.00012}
+}
+```
