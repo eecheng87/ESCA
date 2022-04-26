@@ -1,37 +1,38 @@
-## Welcome to GitHub Pages
+## Effective System Call Aggregation (ESCA)
+The main objective of this work was to reduce the per-syscall overhead through the use of effective syscall aggregation. For that purpose, ESCA takes advantages of system call batching and exploits the parallelism of event-driven applications by leveraging Linux I/O model to overcome the disadvantages of previous solutions.
 
-You can use the [editor on GitHub](https://github.com/eecheng87/ESCA/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+ESCA is capable of reducing the per-syscall overhead by up to 62% for embedded web servers. Real-world highly concurrent event-driven applications such as Nginx and Redis are known to benefit from ESCA, along with full compatibility with Linux syscall semantics and functionalities.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Demo
+![image](https://github.com/eecheng87/dBatch/blob/preview/assets/demo.gif)
 
-### Markdown
+Nginx-ESCA shows 11% improvements over vanilla Nginx.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+![image](https://github.com/eecheng87/dBatch/blob/preview/assets/light-demo.gif)
 
-```markdown
-Syntax highlighted code block
+lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
 
-# Header 1
-## Header 2
-### Header 3
+## Relative Talk
+We also present our work with topic: *Reduce System Call Overhead for Event-Driven Servers* at Open Source Submit Japan 2021
 
-- Bulleted
-- List
+* [Speak Information](https://ossalsjp21.sched.com/event/peeF/reduce-system-call-overhead-for-event-driven-servers-jim-huang-biilabs-co-ltd-steven-cheng-national-cheng-kung-university)
+* [Record](https://youtu.be/_E69oqLsm-0)
+* [Slide](https://static.sched.com/hosted_files/ossalsjp21/c6/Reduce%20System%20Call%20Overhead%20For%20Event%20Driven%20Servers.pdf)
 
-1. Numbered
-2. List
+## Academic Paper
+ESCA: Effective System Call Aggregation for Event-Driven Servers
 
-**Bold** and _Italic_ and `Code` text
+*Yu-Cheng Cheng, Ching-Chun Jim Huang, Chia-Heng Tu*
 
-[Link](url) and ![Image](src)
+PDP 2022: paper is published by [IEEE](https://ieeexplore.ieee.org/abstract/document/9756707?casa_token=FNEPLSTw9zoAAAAA:j19CRSIwB5a74niRUUlwKVTJlpe55wCPNkYlzbn55T5r3ISrm3SnqGkujaCsX8qHPT8Gi27iFA) and is available at [here]()
+
 ```
-
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/eecheng87/ESCA/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+@INPROCEEDINGS{9756707,
+    author={Cheng, Yu-Cheng and Huang, Ching-Chun Jim and Tu, Chia-Heng},
+    booktitle={2022 30th Euromicro International Conference on Parallel, Distributed and Network-based Processing (PDP)},
+    title={ESCA: Effective System Call Aggregation for Event-Driven Servers},
+    year={2022},
+    pages={18-25},
+    doi={10.1109/PDP55904.2022.00012}
+}
+```
