@@ -4,11 +4,11 @@ The main objective of this work was to reduce the per-syscall overhead through t
 ESCA is capable of reducing the per-syscall overhead by up to 62% for embedded web servers. Real-world highly concurrent event-driven applications such as Nginx and Redis are known to benefit from ESCA, along with full compatibility with Linux syscall semantics and functionalities.
 
 ## Demo
-![image](https://github.com/eecheng87/dBatch/blob/preview/assets/demo.gif)
+![image](https://github.com/eecheng87/ESCA/blob/gh-pages/demo.gif)
 
 Nginx-ESCA shows 11% improvements over vanilla Nginx.
 
-![image](https://github.com/eecheng87/dBatch/blob/preview/assets/light-demo.gif)
+![image](https://github.com/eecheng87/ESCA/blob/gh-pages/light-demo.gif)
 
 lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
 
@@ -24,7 +24,7 @@ ESCA: Effective System Call Aggregation for Event-Driven Servers
 
 *Yu-Cheng Cheng, Ching-Chun Jim Huang, Chia-Heng Tu*
 
-PDP 2022: paper is published by [IEEE](https://ieeexplore.ieee.org/abstract/document/9756707?casa_token=FNEPLSTw9zoAAAAA:j19CRSIwB5a74niRUUlwKVTJlpe55wCPNkYlzbn55T5r3ISrm3SnqGkujaCsX8qHPT8Gi27iFA) and is available at [here]()
+PDP 2022: paper is published by [IEEE](https://ieeexplore.ieee.org/abstract/document/9756707?casa_token=FNEPLSTw9zoAAAAA:j19CRSIwB5a74niRUUlwKVTJlpe55wCPNkYlzbn55T5r3ISrm3SnqGkujaCsX8qHPT8Gi27iFA) and is available at [here](https://github.com/eecheng87/ESCA/blob/gh-pages/main.pdf)
 
 ```
 @INPROCEEDINGS{9756707,
