@@ -116,3 +116,8 @@ If you find this work useful in your research, please cite:
     doi={10.1109/PDP55904.2022.00012}
 }
 ```
+
+## License
+
+`ESCA`` is released under the MIT license. Use of this source code is governed by
+a MIT-style license that can be found in the LICENSE file.

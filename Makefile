@@ -98,5 +98,5 @@ clean:
 	$(MAKE) -C wrapper clean
 
 distclean: clean
-	$(RM) wrapper/preload.c module/batch.c
+	$(RM) wrapper/preload.c
 	-$(RM) config

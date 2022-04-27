@@ -1,23 +1,31 @@
+/*
+ * Linux kernel module for Effective System Call Aggregation (ESCA).
+ *
+ * Copyright (c) 2021-2022 National Cheng Kung University, Taiwan.
+ * Authored by Steven Cheng <yucheng871011@gmail.com>
+ */
+
 #include <generated/asm-offsets.h> /* __NR_syscall_max */
 #include <linux/batch.h>
-#include <linux/kallsyms.h> /* kallsyms_lookup_name, __NR_* */
-#include <linux/kernel.h>   /* Basic Linux module headers */
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/fs.h>
+#include <linux/kallsyms.h> /* kallsyms_lookup_name, __NR_* */
+#include <linux/kdev_t.h>
+#include <linux/kernel.h> /* Basic Linux module headers */
 #include <linux/module.h>
 #include <linux/pagemap.h>
 #include <linux/sched/signal.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h> /* copy_from_user put_user */
 #include <linux/version.h>
-#include <linux/kdev_t.h>
 #include <linux/vmalloc.h>
 #include "scTab.h"
 
 MODULE_DESCRIPTION("Generic batch system call API");
-MODULE_AUTHOR("Steven Cheng");
-MODULE_LICENSE("GPL v2");
+MODULE_LICENSE("Dual MIT/GPL");
+MODULE_AUTHOR("National Cheng Kung University, Taiwan");
+MODULE_VERSION("0.1");
 
 struct page *pinned_pages[MAX_THREAD_NUM];
 static void **scTab = 0;

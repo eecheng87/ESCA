@@ -1,3 +1,10 @@
+/*
+ * Syscall wrapper for Effective System Call Aggregation (ESCA).
+ *
+ * Copyright (c) 2021-2022 National Cheng Kung University, Taiwan.
+ * Authored by Steven Cheng <yucheng871011@gmail.com>
+ */
+
 int close(int fd)
 {
     if (!in_segment) {

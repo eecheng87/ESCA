@@ -1,3 +1,10 @@
+/*
+ * Syscall wrapper for Effective System Call Aggregation (ESCA).
+ *
+ * Copyright (c) 2021-2022 National Cheng Kung University, Taiwan.
+ * Authored by Steven Cheng <yucheng871011@gmail.com>
+ */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -11,13 +18,15 @@ void *mpool; /* memory pool */
 int pool_offset;
 struct iovec *iovpool; /* pool for iovector */
 int iov_offset;
-int batch_num;   /* number of busy entry */
+int batch_num; /* number of busy entry */
 struct batch_entry *btable;
 int global_i, global_j;
 size_t pgsize;
 
-long esca_init(){
-    btable = (struct batch_entry *) aligned_alloc(pgsize, pgsize * MAX_THREAD_NUM);
+long esca_init()
+{
+    btable =
+        (struct batch_entry *) aligned_alloc(pgsize, pgsize * MAX_THREAD_NUM);
     syscall(__NR_register, btable);
     return 0;
 }
