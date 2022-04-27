@@ -21,7 +21,7 @@ git clone https://github.com/eecheng87/ESCA
 cd ESCA
 ```
 
-## Config demo target
+## Configure the adaptation target
 Choose either Nginx:
 ```shell
 make config TARGET=nginx
