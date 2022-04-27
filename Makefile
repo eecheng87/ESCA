@@ -31,7 +31,6 @@ endif
 
 config:
 	ln -sf $(shell pwd)/wrapper/$(TARGET)-preload.c wrapper/preload.c
-	ln -sf $(shell pwd)/module/$(TARGET)-batch.c module/batch.c
 	touch $@
 
 $(WRK):
@@ -50,7 +49,7 @@ $(NGX):
 	mkdir local
 	cd $(NGX_PATH) && ./configure --prefix=$(PWD)/local
 	scripts/ngx.sh $(NGX_PATH)
-	cd $(OUT) && patch -p1 < ../patches/ngx.patch
+	cd $(OUT) && patch -p1 < ../patches/ngx_module.patch && patch -p1 < ../patches/ngx_process.patch
 	cd $(NGX_PATH) && make && \
 	make install
 	cp -f configs/nginx.conf local/conf/nginx.conf
@@ -70,18 +69,18 @@ nginx-launch:
 	./downloads/nginx-1.20.0/objs/nginx
 
 nginx-esca-launch:
-	LD_PRELOAD=wrapper/preload.so ./downloads/nginx-1.20.0/objs/nginx
+	LD_PRELOAD=wrapper/wrapper.so ./downloads/nginx-1.20.0/objs/nginx
 
 lighttpd-launch:
 	./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
 
 lighttpd-esca-launch:
-	LD_PRELOAD=wrapper/preload.so ./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
+	LD_PRELOAD=wrapper/wrapper.so ./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
 
-module: config
+module:
 	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
 
-wrapper: config
+wrapper:
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 load-lkm:

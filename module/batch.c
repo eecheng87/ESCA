@@ -2,7 +2,6 @@
 #include <linux/batch.h>
 #include <linux/kallsyms.h> /* kallsyms_lookup_name, __NR_* */
 #include <linux/kernel.h>   /* Basic Linux module headers */
-//#include <linux/mm.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/fs.h>
@@ -12,10 +11,8 @@
 #include <linux/slab.h>
 #include <linux/uaccess.h> /* copy_from_user put_user */
 #include <linux/version.h>
-//#include <linux/init.h>i>
 #include <linux/kdev_t.h>
 #include <linux/vmalloc.h>
-//#include <linux/module.h>
 #include "scTab.h"
 
 MODULE_DESCRIPTION("Generic batch system call API");
@@ -71,23 +68,20 @@ static void disallow_writes(void)
     store_cr0(cr0);
 }
 #elif defined(__aarch64__)
-// skip
+// FIXME: port to ARM64
 #endif
 
 struct batch_entry *batch_table[MAX_THREAD_NUM];
 int table_size = 64;
 int start_index[MAX_THREAD_NUM];
+int global_i, global_j;
 int main_pid; /* PID of main thread */
 
-asmlinkage long sys_register(
-    /*const char*  __user addr*/ const struct pt_regs *regs)
+asmlinkage long sys_register(const struct pt_regs *regs)
 {
-    // printk(KERN_INFO "Start register, address at regs is %p\n", addr);
     int n_page, i, j;
-    unsigned long p1 = regs->di;  //(unsigned long)addr;
-#if DEBUG
-    printk("Register\n");
-#endif
+    unsigned long p1 = regs->di;
+
     /* map batch table from user-space to kernel */
     n_page = get_user_pages(
         (p1),           /* Start address to map */
@@ -104,8 +98,7 @@ asmlinkage long sys_register(
         for (i = 0; i < MAX_ENTRY_NUM; i++)
             batch_table[j][i].rstatus = BENTRY_EMPTY;
 
-    for (i = 0; i < MAX_THREAD_NUM; i++)
-        start_index[i] = 1;
+    global_i = global_j = 0;
 
     main_pid = current->pid;
 
@@ -115,8 +108,7 @@ asmlinkage long sys_register(
 
 asmlinkage long sys_batch(void)
 {
-    int j = start_index[1], cnt = 0, k;
-    int i = start_index[0];
+    int j = global_j, i = global_i, cnt = 0;
 
 #if DEBUG
     printk(KERN_INFO "Start flushing, started from index: %d\n", i);
@@ -134,11 +126,11 @@ asmlinkage long sys_batch(void)
 
         if (i == MAX_ENTRY_NUM - 1) {
             if (j == MAX_THREAD_NUM - 1) {
-                j = 1;
+                j = 0;
             } else {
                 j++;
             }
-            i = 1;
+            i = 0;
         } else {
             i++;
         }
@@ -146,8 +138,8 @@ asmlinkage long sys_batch(void)
 #if DEBUG
     printk(KERN_INFO "batch %d syscalls\n", cnt);
 #endif
-    start_index[0] = i;
-    start_index[1] = j;
+    global_i = i;
+    global_j = j;
     return 0;
 }
 
