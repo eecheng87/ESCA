@@ -17,7 +17,7 @@ sudo apt install autoconf automake libtool
 
 ## Download project
 ```shell
-git clone https://github.com/eecheng87/ESCA.git
+git clone https://github.com/eecheng87/ESCA
 cd ESCA
 ```
 
@@ -87,26 +87,26 @@ git submodule update
 ```
 
 ### Benchmarking
-```
+```shell
 # nginx is at port 8081; lighttpd is at port 3000
 downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
 ```
 
 ### Demo
-![image](https://github.com/eecheng87/dBatch/blob/preview/assets/demo.gif)
+![image](assets/demo.gif)
 
 Nginx-ESCA shows 11% improvements over vanilla Nginx.
 
-![image](https://github.com/eecheng87/dBatch/blob/preview/assets/light-demo.gif)
+![image](assets/light-demo.gif)
 
 lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
 
 ### Referencing our work
 ESCA: Effective System Call Aggregation for Event-Driven Servers
 
-*Yu-Cheng Cheng, Ching-Chun Jim Huang, Chia-Heng Tu*
+*Yu-Cheng Cheng, Ching-Chun (Jim) Huang, Chia-Heng Tu*
 
-PDP 2022: [paper](https://ieeexplore.ieee.org/abstract/document/9756707?casa_token=FNEPLSTw9zoAAAAA:j19CRSIwB5a74niRUUlwKVTJlpe55wCPNkYlzbn55T5r3ISrm3SnqGkujaCsX8qHPT8Gi27iFA)
+PDP 2022: [paper](https://ieeexplore.ieee.org/abstract/document/9756707)
 ```
 @INPROCEEDINGS{9756707,
     author={Cheng, Yu-Cheng and Huang, Ching-Chun Jim and Tu, Chia-Heng},
