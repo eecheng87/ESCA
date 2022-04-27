@@ -5,10 +5,12 @@
  * Authored by Steven Cheng <yucheng871011@gmail.com>
  */
 
+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
 #include <generated/asm-offsets.h> /* __NR_syscall_max */
-#include <linux/esca.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
+#include <linux/esca.h>
 #include <linux/fs.h>
 #include <linux/kallsyms.h> /* kallsyms_lookup_name, __NR_* */
 #include <linux/kdev_t.h>
@@ -40,8 +42,8 @@ typedef asmlinkage long (*F5_t)(long, long, long, long, long);
 typedef asmlinkage long (*F6_t)(long, long, long, long, long, long);
 
 static inline long indirect_call(void *f, int argc, long *a)
-{ /* x64 syscall calling convention changed @4.17 to use
-     struct pt_regs */
+{
+    /* x64 syscall calling convention changed in v4.17 to use struct pt_regs */
     struct pt_regs regs;
     memset(&regs, 0, sizeof regs);
     switch (argc) {
@@ -114,19 +116,18 @@ asmlinkage long sys_register(const struct pt_regs *regs)
     return 0;
 }
 
-
 asmlinkage long sys_batch(void)
 {
     int j = global_j, i = global_i, cnt = 0;
 
 #if DEBUG
-    printk(KERN_INFO "Start flushing, started from index: %d\n", i);
+    pr_info("Start flushing, started from index: %d\n", i);
 #endif
     while (batch_table[j][i].rstatus == BENTRY_BUSY) {
 #if DEBUG
         cnt++;
-        printk(KERN_INFO "Index %d do syscall %d (%d %d)\n", i,
-               batch_table[j][i].sysnum, j, i);
+        pr_info("Index %d do syscall %d (%d %d)\n", i, batch_table[j][i].sysnum,
+                j, i);
 #endif
         batch_table[j][i].sysret =
             indirect_call(scTab[batch_table[j][i].sysnum],
@@ -145,7 +146,7 @@ asmlinkage long sys_batch(void)
         }
     }
 #if DEBUG
-    printk(KERN_INFO "batch %d syscalls\n", cnt);
+    pr_info("batch %d syscalls\n", cnt);
 #endif
     global_i = i;
     global_j = j;
@@ -171,12 +172,12 @@ static int __init mod_init(void)
 
     disallow_writes();
 
-    printk(KERN_INFO "batch: installed as %d\n", __NR_batch_flush);
+    pr_info("installed as %d\n", __NR_batch_flush);
     return 0;
 }
 static void __exit mod_cleanup(void)
 {
-    printk(KERN_INFO "batch: removed\n");
+    pr_info("removed\n");
     allow_writes();
 
     /* restore */
