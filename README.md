@@ -109,7 +109,7 @@ ESCA: Effective System Call Aggregation for Event-Driven Servers
 PDP 2022: [paper](https://ieeexplore.ieee.org/abstract/document/9756707)
 ```
 @INPROCEEDINGS{9756707,
-    author={Cheng, Yu-Cheng and Huang, Ching-Chun Jim and Tu, Chia-Heng},
+    author={Cheng, Yu-Cheng and Huang, Ching-Chun (Jim) and Tu, Chia-Heng},
     booktitle={2022 30th Euromicro International Conference on Parallel, Distributed and Network-based Processing (PDP)},
     title={ESCA: Effective System Call Aggregation for Event-Driven Servers},
     year={2022},
