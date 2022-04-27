@@ -2,9 +2,9 @@ all: so
 
 so:
 	gcc -shared -o libshim.so -fPIC shim.c
-	gcc -shared -fPIC preload.c -o preload.so -ldl -lpthread
+	gcc -shared -fPIC wrapper.c -o wrapper.so -ldl -lpthread
 
 
-.PHONY: clean preload.so
+.PHONY: clean wrapper.so
 clean:
-	rm -f *.o  preload.so libshim.so
+	rm -f *.o  wrapper.so libshim.so preload.c

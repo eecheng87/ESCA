@@ -1,19 +1,16 @@
 --- old/lighttpd1.4-lighttpd-1.4.58/src/server.c	2020-12-28 11:42:56.000000000 +0800
-+++ new/lighttpd1.4-lighttpd-1.4.58/src/server.c	2021-11-04 13:35:13.666313986 +0800
-@@ -1914,7 +1914,7 @@
- 		}
- 
++++ new/lighttpd1.4-lighttpd-1.4.58/src/server.c	2022-04-27 16:35:03.727871000 +0800
+@@ -1871,3 +1871,3 @@
+ 	time_t last_active_ts = time(NULL);
+-
++esca_init();
+ 	while (!srv_shutdown) {
+@@ -1916,3 +1916,3 @@
  		connections * const joblist = connection_joblist;
 -
 +batch_start();
  		if (fdevent_poll(srv->ev, joblist->used ? 0 : 1000) > 0) {
- 			last_active_ts = log_epoch_secs;
- 		}
-@@ -1924,6 +1924,7 @@
- 		  : &srv->joblist_A;
- 
+@@ -1926,2 +1926,3 @@
  		server_run_con_queue(joblist);
 +batch_flush();
  	}
- }
- 
