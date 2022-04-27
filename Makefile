@@ -19,9 +19,9 @@ PWD := $(shell pwd)
 
 OUT := downloads
 
-all: module wrapper
+all: lkm wrapper
 
-.PHONY: $(WRK) $(NGX) $(LIGHTY) config module wrapper clean
+.PHONY: $(WRK) $(NGX) $(LIGHTY) config lkm wrapper clean
 
 ifeq ($(strip $(TARGET)),nginx)
 TARGET = nginx
@@ -78,24 +78,24 @@ lighttpd-launch:
 lighttpd-esca-launch:
 	LD_PRELOAD=wrapper/wrapper.so ./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
 
-module: config
+lkm: config
 	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
 
 wrapper: config
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 load-lkm:
-	sudo insmod module/batch.ko
+	sudo insmod lkm/esca.ko
 
 unload-lkm:
-	sudo rmmod batch
+	sudo rmmod esca
 
 clean:
 	rm -rf $(WRK_PATH)
 	rm -rf $(NGX_PATH)
 	rm -rf $(LIGHTY_PATH)
 	rm -rf local
-	$(MAKE) -C module clean
+	$(MAKE) -C lkm clean
 	$(MAKE) -C wrapper clean
 
 distclean: clean
