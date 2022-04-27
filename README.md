@@ -21,21 +21,10 @@ git clone https://github.com/eecheng87/ESCA
 cd ESCA
 ```
 
-## Configure the adaptation target
-Choose either Nginx:
-```shell
-make config TARGET=nginx
-```
-
-or lighttpd:
-```shell
-make config TARGET=lighttpd
-```
-
 ## Build ESCA
-Compile files under `/module` and `/wrapper` (This step must be taken before next step)
+Compile files under `/module` and `/wrapper` (The default target is lighttpd)
 ```shell
-make
+make TARGET=<nginx | lighttpd>
 ```
 
 ## Build experimental target
@@ -119,5 +108,5 @@ If you find this work useful in your research, please cite:
 
 ## License
 
-`ESCA`` is released under the MIT license. Use of this source code is governed by
+`ESCA` is released under the MIT license. Use of this source code is governed by
 a MIT-style license that can be found in the LICENSE file.
