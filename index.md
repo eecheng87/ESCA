@@ -25,8 +25,12 @@ ESCA: Effective System Call Aggregation for Event-Driven Servers
 
 The paper is available in the [IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9756707), and you can get a <a href="main.pdf" target="_blank">preprint copy</a>.
 
+## Citation
+
+If you use this code for your research, please cite our <a href="main.pdf" target="_blank">paper</a>.
+
 ```
-@INPROCEEDINGS{9756707,
+@inproceedings{Cheng2022ESCA,
     author={Cheng, Yu-Cheng and Huang, Ching-Chun (Jim) and Tu, Chia-Heng},
     booktitle={2022 30th Euromicro International Conference on Parallel, Distributed and Network-based Processing (PDP)},
     title={ESCA: Effective System Call Aggregation for Event-Driven Servers},
