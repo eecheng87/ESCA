@@ -55,5 +55,5 @@ dkms.conf
 # Generated files
 downloads/
 wrapper/preload.c
-module/syscall-table.h
+lkm/syscall-table.h
 config
