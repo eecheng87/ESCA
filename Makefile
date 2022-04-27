@@ -60,7 +60,7 @@ $(LIGHTY):
 	wget $(LIGHTY_SOURCE)
 	tar -zxvf $(LIGHTY_ZIP_NAME).tar.gz -C $(OUT)
 	$(RM) $(LIGHTY_ZIP_NAME).tar.gz
-	cd $(LIGHTY_PATH) && ./autogen.sh && ./configure
+	cd $(LIGHTY_PATH) && ./autogen.sh && ./configure --without-pcre
 	scripts/lighttpd.sh $(LIGHTY_PATH)
 	cd $(OUT) && patch -p1 < ../patches/lighttpd.patch
 	cd $(LIGHTY_PATH) && sudo make install
