@@ -13,9 +13,8 @@ Nginx-ESCA shows 11% improvements over vanilla Nginx.
 lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
 
 ## Presentation
-We also present our work with topic: *Reduce System Call Overhead for Event-Driven Servers* at Open Source Submit Japan 2021
-
-* [Presentation information](https://ossalsjp21.sched.com/event/peeF/reduce-system-call-overhead-for-event-driven-servers-jim-huang-biilabs-co-ltd-steven-cheng-national-cheng-kung-university)
+We also present our work with topic: *Reduce System Call Overhead for Event-Driven Servers* at [Open Source Submit Japan 2021](https://events.linuxfoundation.org/archive/2021/open-source-summit-japan/), organized by the [Linux Foundation](https://www.linuxfoundation.org/).
+* [Presentation information](https://ossalsjp21.sched.com/event/peeF)
 * [slides](https://static.sched.com/hosted_files/ossalsjp21/c6/Reduce%20System%20Call%20Overhead%20For%20Event%20Driven%20Servers.pdf)
 * [video recording](https://youtu.be/_E69oqLsm-0)
 
