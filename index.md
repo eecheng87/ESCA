@@ -22,13 +22,13 @@ We also present our work with topic: *Reduce System Call Overhead for Event-Driv
 ## Academic Paper
 ESCA: Effective System Call Aggregation for Event-Driven Servers
 
-*Yu-Cheng Cheng, Ching-Chun Jim Huang, Chia-Heng Tu*
+*Yu-Cheng Cheng, Ching-Chun (Jim) Huang, Chia-Heng Tu*
 
 PDP 2022: paper is published by [IEEE](https://ieeexplore.ieee.org/abstract/document/9756707?casa_token=FNEPLSTw9zoAAAAA:j19CRSIwB5a74niRUUlwKVTJlpe55wCPNkYlzbn55T5r3ISrm3SnqGkujaCsX8qHPT8Gi27iFA) and is available at <a href="main.pdf" target="_blank">here</a>
 
 ```
 @INPROCEEDINGS{9756707,
-    author={Cheng, Yu-Cheng and Huang, Ching-Chun Jim and Tu, Chia-Heng},
+    author={Cheng, Yu-Cheng and Huang, Ching-Chun (Jim) and Tu, Chia-Heng},
     booktitle={2022 30th Euromicro International Conference on Parallel, Distributed and Network-based Processing (PDP)},
     title={ESCA: Effective System Call Aggregation for Event-Driven Servers},
     year={2022},
