@@ -14,7 +14,7 @@
 #include <string.h>
 #include <sys/uio.h>
 
-#include "../include/linux/batch.h"
+#include "../include/linux/esca.h"
 
 struct pthread_fake {
     /* offset to find tid */

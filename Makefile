@@ -30,7 +30,8 @@ TARGET = lighttpd
 endif
 
 config:
-	ln -sf $(shell pwd)/wrapper/$(TARGET)-preload.c wrapper/preload.c
+	-$(RM) wrapper/preload.c
+	(cd wrapper ; ln -s $(TARGET)-preload.c preload.c)
 	touch $@
 
 $(WRK):
@@ -77,10 +78,10 @@ lighttpd-launch:
 lighttpd-esca-launch:
 	LD_PRELOAD=wrapper/wrapper.so ./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
 
-module:
+module: config
 	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
 
-wrapper:
+wrapper: config
 	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 load-lkm:

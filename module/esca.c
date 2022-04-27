@@ -6,7 +6,7 @@
  */
 
 #include <generated/asm-offsets.h> /* __NR_syscall_max */
-#include <linux/batch.h>
+#include <linux/esca.h>
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/fs.h>
@@ -20,7 +20,8 @@
 #include <linux/uaccess.h> /* copy_from_user put_user */
 #include <linux/version.h>
 #include <linux/vmalloc.h>
-#include "scTab.h"
+
+#include "syscall-table.h"
 
 MODULE_DESCRIPTION("Generic batch system call API");
 MODULE_LICENSE("Dual MIT/GPL");
