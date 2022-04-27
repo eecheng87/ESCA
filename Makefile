@@ -30,8 +30,9 @@ TARGET = lighttpd
 endif
 
 config:
-	ln -s $(shell pwd)/wrapper/$(TARGET)-preload.c wrapper/preload.c
-	ln -s $(shell pwd)/module/$(TARGET)-batch.c module/batch.c
+	ln -sf $(shell pwd)/wrapper/$(TARGET)-preload.c wrapper/preload.c
+	ln -sf $(shell pwd)/module/$(TARGET)-batch.c module/batch.c
+	touch $@
 
 $(WRK):
 	@echo "download wrk..."
@@ -77,11 +78,11 @@ lighttpd-launch:
 lighttpd-esca-launch:
 	LD_PRELOAD=wrapper/preload.so ./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
 
-module:
+module: config
 	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
 
-wrapper:
-	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
+wrapper: config
+	$(MAKE) -C $@ $(MAKECMDGOALS)
 
 load-lkm:
 	sudo insmod module/batch.ko
@@ -94,7 +95,9 @@ clean:
 	rm -rf $(NGX_PATH)
 	rm -rf $(LIGHTY_PATH)
 	rm -rf local
-	$(RM) wrapper/preload.c
-	$(RM) module/batch.c
-	$(MAKE) -C module $(MAKECMDGOALS)
-	$(MAKE) -C wrapper $(MAKECMDGOALS)
+	$(MAKE) -C module clean
+	$(MAKE) -C wrapper clean
+
+distclean: clean
+	$(RM) wrapper/preload.c module/batch.c
+	-$(RM) config
