@@ -55,7 +55,6 @@ long batch_flush()
 
 __attribute__((constructor)) static void setup(void)
 {
-    int i;
     pgsize = getpagesize();
     in_segment = 0;
     batch_num = 0;

@@ -1,10 +1,16 @@
-all: so
+CFLAGS := -Wall -O2
+CFLAGS += -shared -fPIC
+LDFLAGS = -ldl -lpthread
 
-so:
-	gcc -shared -o libshim.so -fPIC shim.c
-	gcc -shared -fPIC wrapper.c -o wrapper.so -ldl -lpthread
+DLL = libshim.so wrapper.so
+all: $(DLL)
 
+libshim.so: shim.c
+	$(CC) $(CFLAGS) -o $@ $<
 
-.PHONY: clean wrapper.so
+wrapper.so: wrapper.c
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+.PHONY: clean
 clean:
-	$(RM) *.o  wrapper.so libshim.so
+	$(RM) *.o $(DLL)
