@@ -24,7 +24,7 @@ ESCA: Effective System Call Aggregation for Event-Driven Servers
 
 *Yu-Cheng Cheng, Ching-Chun (Jim) Huang, Chia-Heng Tu*
 
-PDP 2022: paper is published by [IEEE](https://ieeexplore.ieee.org/abstract/document/9756707?casa_token=FNEPLSTw9zoAAAAA:j19CRSIwB5a74niRUUlwKVTJlpe55wCPNkYlzbn55T5r3ISrm3SnqGkujaCsX8qHPT8Gi27iFA) and is available at <a href="main.pdf" target="_blank">here</a>
+The paper is available in the [IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9756707), and you can get a <a href="main.pdf" target="_blank">preprint copy</a>.
 
 ```
 @INPROCEEDINGS{9756707,
