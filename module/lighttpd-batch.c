@@ -3,18 +3,18 @@
 #include <linux/kallsyms.h> /* kallsyms_lookup_name, __NR_* */
 #include <linux/kernel.h>   /* Basic Linux module headers */
 //#include <linux/mm.h>
+#include <linux/cdev.h>
+#include <linux/device.h>
+#include <linux/fs.h>
 #include <linux/module.h>
 #include <linux/pagemap.h>
 #include <linux/sched/signal.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h> /* copy_from_user put_user */
 #include <linux/version.h>
-#include <linux/cdev.h>
-#include <linux/device.h>
-#include <linux/fs.h>
 //#include <linux/init.h>i>
-#include <linux/vmalloc.h>
 #include <linux/kdev_t.h>
+#include <linux/vmalloc.h>
 //#include <linux/module.h>
 #include "scTab.h"
 
@@ -33,10 +33,9 @@ typedef asmlinkage long (*F4_t)(long, long, long, long);
 typedef asmlinkage long (*F5_t)(long, long, long, long, long);
 typedef asmlinkage long (*F6_t)(long, long, long, long, long, long);
 
-static inline long
-indirect_call(void *f, int argc,
-              long *a) { /* x64 syscall calling convention changed @4.17 to use
-                            struct pt_regs */
+static inline long indirect_call(void *f, int argc, long *a)
+{ /* x64 syscall calling convention changed @4.17 to use
+     struct pt_regs */
     struct pt_regs regs;
     memset(&regs, 0, sizeof regs);
     switch (argc) {
@@ -53,13 +52,12 @@ indirect_call(void *f, int argc,
     case 1:
         regs.di = a[0]; /* Falls through. */
     }
-    return ((F1_t)f)((long)&regs);
+    return ((F1_t) f)((long) &regs);
 }
 
 #if defined(__x86_64__)
 extern unsigned long __force_order __weak;
-#define store_cr0(x) asm volatile("mov %0,%%cr0" \
-                                  : "+r"(x), "+m"(__force_order))
+#define store_cr0(x) asm volatile("mov %0,%%cr0" : "+r"(x), "+m"(__force_order))
 static void allow_writes(void)
 {
     unsigned long cr0 = read_cr0();
@@ -81,23 +79,25 @@ int table_size = 64;
 int start_index[MAX_THREAD_NUM];
 int main_pid; /* PID of main thread */
 
-asmlinkage long sys_register(/*const char*  __user addr*/const struct pt_regs *regs) {
-   //printk(KERN_INFO "Start register, address at regs is %p\n", addr);
+asmlinkage long sys_register(
+    /*const char*  __user addr*/ const struct pt_regs *regs)
+{
+    // printk(KERN_INFO "Start register, address at regs is %p\n", addr);
     int n_page, i, j;
-    unsigned long p1 = regs->di;//(unsigned long)addr;
+    unsigned long p1 = regs->di;  //(unsigned long)addr;
 #if DEBUG
-printk("Register\n");
+    printk("Register\n");
 #endif
     /* map batch table from user-space to kernel */
     n_page = get_user_pages(
-        (p1), /* Start address to map */
+        (p1),           /* Start address to map */
         MAX_THREAD_NUM, /* Number of pinned pages. 4096 btyes in this machine */
         FOLL_FORCE | FOLL_WRITE, /* Force flag */
         pinned_pages,            /* struct page ** pointer to pinned pages */
         NULL);
 
-   for (i = 0; i < MAX_THREAD_NUM; i++)
-        batch_table[i] = (struct batch_entry *)kmap(pinned_pages[i]);
+    for (i = 0; i < MAX_THREAD_NUM; i++)
+        batch_table[i] = (struct batch_entry *) kmap(pinned_pages[i]);
 
     /* initial table status */
     for (j = 0; j < MAX_THREAD_NUM; j++)
@@ -113,7 +113,8 @@ printk("Register\n");
 }
 
 
-asmlinkage long sys_batch(void) {
+asmlinkage long sys_batch(void)
+{
     int j = start_index[1], cnt = 0, k;
     int i = start_index[0];
 
@@ -129,24 +130,21 @@ asmlinkage long sys_batch(void) {
         batch_table[j][i].sysret =
             indirect_call(scTab[batch_table[j][i].sysnum],
                           batch_table[j][i].nargs, batch_table[j][i].args);
-	batch_table[j][i].rstatus = BENTRY_EMPTY;
+        batch_table[j][i].rstatus = BENTRY_EMPTY;
 
-	if(i == MAX_ENTRY_NUM - 1){
-            if(j == MAX_THREAD_NUM -1){
+        if (i == MAX_ENTRY_NUM - 1) {
+            if (j == MAX_THREAD_NUM - 1) {
                 j = 1;
-            }else
-            {
+            } else {
                 j++;
             }
             i = 1;
-        }else
-        {
+        } else {
             i++;
         }
-
     }
 #if DEBUG
-        printk(KERN_INFO "batch %d syscalls\n", cnt);
+    printk(KERN_INFO "batch %d syscalls\n", cnt);
 #endif
     start_index[0] = i;
     start_index[1] = j;
@@ -156,9 +154,10 @@ asmlinkage long sys_batch(void) {
 void *sys_oldcall0;
 void *sys_oldcall1;
 
-static int __init mod_init(void) {
+static int __init mod_init(void)
+{
     int rc;
-    scTab = (void **)(smSCTab + ((char *)&system_wq - smSysWQ));
+    scTab = (void **) (smSCTab + ((char *) &system_wq - smSysWQ));
     allow_writes();
 
     /* backup */
@@ -173,10 +172,9 @@ static int __init mod_init(void) {
 
     printk(KERN_INFO "batch: installed as %d\n", __NR_batch_flush);
     return 0;
-
-
 }
-static void __exit mod_cleanup(void) {
+static void __exit mod_cleanup(void)
+{
     printk(KERN_INFO "batch: removed\n");
     allow_writes();
 

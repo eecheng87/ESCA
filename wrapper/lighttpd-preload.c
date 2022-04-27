@@ -1,5 +1,5 @@
-#include "preload.h"
 #include <fcntl.h>
+#include "preload.h"
 
 int curindex[MAX_THREAD_NUM];
 int table_size = 64;
@@ -11,26 +11,29 @@ struct iovec *iovpool; /* pool for iovector */
 int iov_offset;
 int batch_num;   /* number of busy entry */
 int syscall_num; /* number of syscall triggered currently */
-struct batch_entry* btable;
+struct batch_entry *btable;
 
 
-long batch_start(int exp) {
+long batch_start(int exp)
+{
     in_segment = 1;
     batch_num = 0;
-    //syscall_num = 0;
+    // syscall_num = 0;
     return 0;
 }
 
-long batch_flush() {
+long batch_flush()
+{
     in_segment = 0;
 
-/* avoid useless batch_flush */
+    /* avoid useless batch_flush */
     if (batch_num == 0)
         return 0;
     return syscall(__NR_batch_flush);
 }
 
-ssize_t shutdown(int fd, int how) {
+ssize_t shutdown(int fd, int how)
+{
     syscall_num++;
     if (!in_segment) {
         return real_shutdown(fd, how);
@@ -97,7 +100,8 @@ ssize_t sendfile64(int out_fd, int in_fd, off_t *offset, size_t count) {
 
 #endif
 #if 1
-ssize_t writev(int fd, const struct iovec *iov, int iovcnt) {
+ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
+{
     syscall_num++;
     if (!in_segment) {
         return real_writev(fd, iov, iovcnt);
@@ -107,7 +111,7 @@ ssize_t writev(int fd, const struct iovec *iov, int iovcnt) {
     int off, toff = 0, len = 0, i;
     off = curindex[1] << 6; /* 6 = log64 */
 
-    for(i = 0; i < iovcnt; i++){
+    for (i = 0; i < iovcnt; i++) {
         int ll = iov[i].iov_len;
         len += iov[i].iov_len;
     }
@@ -116,7 +120,7 @@ ssize_t writev(int fd, const struct iovec *iov, int iovcnt) {
     btable[off + curindex[toff]].rstatus = BENTRY_BUSY;
     btable[off + curindex[toff]].nargs = 3;
     btable[off + curindex[toff]].args[0] = fd;
-    btable[off + curindex[toff]].args[1] = (long)(iov/*iovpool[iov_offset]*/);
+    btable[off + curindex[toff]].args[1] = (long) (iov /*iovpool[iov_offset]*/);
     btable[off + curindex[toff]].args[2] = iovcnt;
     btable[off + curindex[toff]].pid = main_thread_pid + off;
 
@@ -137,8 +141,8 @@ ssize_t writev(int fd, const struct iovec *iov, int iovcnt) {
 
 
 
-
-__attribute__((constructor)) static void setup(void) {
+__attribute__((constructor)) static void setup(void)
+{
     int i;
     size_t pgsize = getpagesize();
     in_segment = 0;
@@ -148,12 +152,14 @@ __attribute__((constructor)) static void setup(void) {
     /* get pid of main thread */
     main_thread_pid = syscall(39);
     btable =
-        (struct batch_entry *)aligned_alloc(pgsize, pgsize * MAX_THREAD_NUM);
+        (struct batch_entry *) aligned_alloc(pgsize, pgsize * MAX_THREAD_NUM);
 
     /* store glibc function */
     real_writev = real_writev ? real_writev : dlsym(RTLD_NEXT, "writev");
-    real_shutdown = real_shutdown ? real_shutdown : dlsym(RTLD_NEXT, "shutdown");
-    real_sendfile = real_sendfile ? real_sendfile : dlsym(RTLD_NEXT, "sendfile");
+    real_shutdown =
+        real_shutdown ? real_shutdown : dlsym(RTLD_NEXT, "shutdown");
+    real_sendfile =
+        real_sendfile ? real_sendfile : dlsym(RTLD_NEXT, "sendfile");
 
     syscall(__NR_register, btable);
     for (i = 0; i < MAX_THREAD_NUM; i++)

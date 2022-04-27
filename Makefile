@@ -37,7 +37,7 @@ $(WRK):
 	@echo "download wrk..."
 	wget $(WRK_SOURCE)
 	unzip -d $(OUT) master.zip
-	rm master.zip
+	$(RM) master.zip
 	sudo $(MAKE) -j4 -C $(OUT)/$(WRK_NAME) all
 
 $(NGX):
@@ -45,7 +45,7 @@ $(NGX):
 	wget $(NGX_SOURCE)
 	mkdir $(NGX_PATH)
 	tar -zxvf $(NGX_NAME).tar.gz -C $(OUT)
-	rm $(NGX_NAME).tar.gz
+	$(RM) $(NGX_NAME).tar.gz
 	mkdir local
 	cd $(NGX_PATH) && ./configure --prefix=$(PWD)/local
 	scripts/ngx.sh $(NGX_PATH)
@@ -58,7 +58,7 @@ $(LIGHTY):
 	@echo "download lighttpd..."
 	wget $(LIGHTY_SOURCE)
 	tar -zxvf $(LIGHTY_ZIP_NAME).tar.gz -C $(OUT)
-	rm $(LIGHTY_ZIP_NAME).tar.gz
+	$(RM) $(LIGHTY_ZIP_NAME).tar.gz
 	cd $(LIGHTY_PATH) && ./autogen.sh && ./configure
 	scripts/lighttpd.sh $(LIGHTY_PATH)
 	cd $(OUT) && patch -p1 < ../patches/lighttpd.patch
@@ -94,7 +94,7 @@ clean:
 	rm -rf $(NGX_PATH)
 	rm -rf $(LIGHTY_PATH)
 	rm -rf local
-	rm wrapper/preload.c
-	rm module/batch.c
+	$(RM) wrapper/preload.c
+	$(RM) module/batch.c
 	$(MAKE) -C module $(MAKECMDGOALS)
 	$(MAKE) -C wrapper $(MAKECMDGOALS)

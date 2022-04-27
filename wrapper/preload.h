@@ -6,7 +6,6 @@
 #define POOL_UNIT 8
 #define BATCH_NUM 50
 
-#include "../include/linux/batch.h"
 #include <dlfcn.h>
 #include <inttypes.h>
 #include <pthread.h>
@@ -14,25 +13,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/uio.h>
-//#include <sys/stat.h>
-//#include <sys/auxv.h>
-//#include <sys/mman.h>
-//#include <errno.h>
-//#include <unistd.h>
-//#include <sys/syscall.h>
-//#include <signal.h>
+
+#include "../include/linux/batch.h"
 
 struct pthread_fake {
     /* offset to find tid */
-    void* nothing[90];
+    void *nothing[90];
     pid_t tid;
 };
 
-extern struct batch_entry* btable;
+extern struct batch_entry *btable;
 
 typedef long (*close_t)(int fd);
 close_t real_close;
-typedef long (*sendfile_t)(int outfd, int infd, off_t* offset, size_t count);
+typedef long (*sendfile_t)(int outfd, int infd, off_t *offset, size_t count);
 sendfile_t real_sendfile;
 typedef long (*shutdown_t)(int fd, int how);
 shutdown_t real_shutdown;

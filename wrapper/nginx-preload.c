@@ -1,21 +1,21 @@
 #include "preload.h"
-//int curindex[MAX_THREAD_NUM];
+// int curindex[MAX_THREAD_NUM];
 int curindex = 1;
 int table_size = 64;
 int main_thread_pid = 0;
 int in_segment;
-void* mpool; /* memory pool */
+void *mpool; /* memory pool */
 int pool_offset;
 int batch_num; /* number of busy entry */
 
 int off, toff;
-struct batch_entry* btable;
+struct batch_entry *btable;
 long batch_start(int events)
 {
     in_segment = 1;
     if (!btable) {
         int pgsize = getpagesize();
-        btable = (struct batch_entry*)aligned_alloc(pgsize, pgsize);
+        btable = (struct batch_entry *) aligned_alloc(pgsize, pgsize);
         toff = syscall(39) - main_thread_pid;
         toff -= 1;
         printf("Register table %d\n", toff);
@@ -54,10 +54,11 @@ int close(int fd)
 }
 
 #if 1
-ssize_t sendfile64(int outfd, int infd, off_t* offset, size_t count)
+ssize_t sendfile64(int outfd, int infd, off_t *offset, size_t count)
 {
     if (!in_segment) {
-        real_sendfile = real_sendfile ? real_sendfile : dlsym(RTLD_NEXT, "sendfile");
+        real_sendfile =
+            real_sendfile ? real_sendfile : dlsym(RTLD_NEXT, "sendfile");
         return real_sendfile(outfd, infd, offset, count);
     }
     batch_num++;
