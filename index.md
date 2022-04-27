@@ -19,11 +19,7 @@ We also present our work with topic: *Reduce System Call Overhead for Event-Driv
 * [video recording](https://youtu.be/_E69oqLsm-0)
 
 ## Academic Paper
-In [PDP 2022](https://pdp2022.infor.uva.es/)
-*[Yu-Cheng Cheng](https://github.com/eecheng87), [Ching-Chun (Jim) Huang](https://github.com/jserv), Chia-Heng Tu*
-National Cheng Kung University, Taiwan.
-
-The paper is available in the [IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9756707) digital library, and you can get a <a href="main.pdf" target="_blank">preprint copy</a>.
+Please see our [PDP 2022](https://pdp2022.infor.uva.es/) paper, available in the [IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9756707) digital library, and you can get a <a href="main.pdf" target="_blank">preprint copy</a>.
 
 ## Citation
 
