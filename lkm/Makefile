@@ -1,5 +1,6 @@
 obj-m := esca.o
 EXTRA_CFLAGS := -I$M/../include
+EXTRA_CFLAGS += -D'DEBUG=0'
 
 all: syscall-table.h esca.o
 esca.o : syscall-table.h

@@ -7,9 +7,6 @@
 #define __NR_fpreg 403
 #define __NR_fpexit 404
 
-/* config Debug mode */
-#define DEBUG 0
-
 /* batch table entry info */
 #define BENTRY_EMPTY 0
 #define BENTRY_BUSY 1
@@ -53,4 +50,5 @@ static inline long batch_register(struct batch_entry *table)
     ((syscall_t){__NR_##N, FL, Z, P, 6, (long) (A), (long) (B), (long) (C), \
                  (long) (D), (long) (E), (long) (F)})
 #endif /* __KERNEL__ */
+
 #endif /* LINUX_BATCH_H */
