@@ -7,4 +7,4 @@ so:
 
 .PHONY: clean wrapper.so
 clean:
-	rm -f *.o  wrapper.so libshim.so preload.c
+	$(RM) *.o  wrapper.so libshim.so
