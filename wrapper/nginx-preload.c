@@ -11,6 +11,7 @@ int close(int fd)
         real_close = real_close ? real_close : dlsym(RTLD_NEXT, "close");
         return real_close(fd);
     }
+
     batch_num++;
     int off = global_j << 6;
 
@@ -35,9 +36,9 @@ int close(int fd)
 
 ssize_t sendfile64(int outfd, int infd, off_t *offset, size_t count)
 {
-    if (!in_segment) {
+    if (!in_segment)
         return real_sendfile(outfd, infd, offset, count);
-    }
+
     batch_num++;
     int off = global_j << 6;
 

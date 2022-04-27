@@ -1,3 +1,5 @@
+#pragma once
+
 #define _GNU_SOURCE
 
 #define MAX_TABLE_SIZE 64

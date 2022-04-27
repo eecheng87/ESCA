@@ -7,9 +7,9 @@
 
 ssize_t shutdown(int fd, int how)
 {
-    if (!in_segment) {
+    if (!in_segment)
         return real_shutdown(fd, how);
-    }
+
     batch_num++;
     int off = global_j << 6;
 
@@ -36,9 +36,9 @@ ssize_t shutdown(int fd, int how)
 
 ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
 {
-    if (!in_segment) {
+    if (!in_segment)
         return real_writev(fd, iov, iovcnt);
-    }
+
     batch_num++;
 
     int off, len = 0, i;
