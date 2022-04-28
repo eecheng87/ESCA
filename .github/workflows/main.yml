@@ -1,13 +1,24 @@
-name: CI
+name: Automated Tests
 
 on: [push, pull_request]
 
 jobs:
-  esca:
+  ESCA:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3.0.2
     - name: make-nginx
       run:  make TARGET=nginx
     - name: make-lighttpd
       run:  make TARGET=lighttpd
+
+  Style:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3.0.2
+      - name: style check
+        run: |
+            sudo apt-get install -q -y clang-format-12
+            sh .ci/check-format.sh
+        shell: bash
