@@ -5,7 +5,7 @@ an advanced form of syscall aggregation, which is more flexible and applicable
 to service-oriented scenarios, offering full compatibility with the existing
 OS kernels and syscall interfaces.
 
-This branch illustrates how Nginx and lighttpd benefit from ESCA.
+This page illustrates how Nginx and lighttpd benefit from ESCA.
 
 ## Prerequisite
 For Nginx and wrk:
