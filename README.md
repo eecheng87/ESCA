@@ -21,24 +21,24 @@ git clone https://github.com/eecheng87/ESCA
 cd ESCA
 ```
 
-## Build ESCA
-Compile files under `/module` and `/wrapper` (The default target is lighttpd)
+## Build from source
+Compile files under directory `lkm/` and `wrapper/` (The default target is lighttpd)
 ```shell
 make TARGET=<nginx | lighttpd>
 ```
 
-## Build experimental target
+### Build adaptation target
 Build `wrk`
 ```shell
 make wrk
 ```
 
-Download & configure nginx
+Download and build nginx
 ```shell
 make nginx
 ```
 
-Download & build lighttpd
+Download and build lighttpd
 ```shell
 make lighttpd
 ```
