@@ -1,11 +1,10 @@
 # Effective System Call Aggregation (ESCA)
 
-The main objective of this work is to reduce the per-syscall overhead through
-an advanced form of syscall aggregation, which is more flexible and applicable
-to service-oriented scenarios, offering full compatibility with the existing
-OS kernels and syscall interfaces.
+The main objective of this work was to reduce the per-syscall overhead through the use of effective syscall aggregation.
+For that purpose, ESCA takes advantages of system call batching and exploits the parallelism of event-driven applications by leveraging Linux I/O model to overcome the disadvantages of previous solutions.
 
-This page illustrates how Nginx and lighttpd benefit from ESCA.
+ESCA is capable of reducing the per-syscall overhead by up to 62% for embedded web servers.
+Real-world highly concurrent event-driven applications such as Nginx and Redis are known to benefit from ESCA, along with full compatibility with Linux syscall semantics and functionalities.
 
 ## Prerequisite
 For Nginx and wrk:
