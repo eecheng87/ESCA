@@ -1,0 +1,13 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  esca:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2.4.0
+    - name: make-nginx
+      run:  make TARGET=nginx
+    - name: make-lighttpd
+      run:  make TARGET=lighttpd
