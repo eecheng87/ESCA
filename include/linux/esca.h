@@ -1,5 +1,5 @@
-#ifndef LINUX_BATCH_H /* define syscall_t batch(), batcha?() for user space */
-#define LINUX_BATCH_H /* and syscall_t __NR_batch for the kernel module. */
+#ifndef LINUX_ESCA_H
+#define LINUX_ESCA_H /* and syscall_t __NR_batch for the kernel module. */
 
 #include <asm/unistd.h>      /* __NR_* */
 #define __NR_batch_flush 183 /* Hijack Andrew FS call slot for now */
@@ -51,4 +51,4 @@ static inline long batch_register(struct batch_entry *table)
                  (long) (D), (long) (E), (long) (F)})
 #endif /* __KERNEL__ */
 
-#endif /* LINUX_BATCH_H */
+#endif /* LINUX_ESCA_H */

@@ -8,17 +8,12 @@
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <generated/asm-offsets.h> /* __NR_syscall_max */
-#include <linux/cdev.h>
-#include <linux/device.h>
 #include <linux/esca.h>
-#include <linux/fs.h>
 #include <linux/kallsyms.h> /* kallsyms_lookup_name, __NR_* */
-#include <linux/kdev_t.h>
-#include <linux/kernel.h> /* Basic Linux module headers */
+#include <linux/kernel.h>   /* Basic Linux module headers */
 #include <linux/module.h>
 #include <linux/pagemap.h>
 #include <linux/sched/signal.h>
-#include <linux/slab.h>
 #include <linux/uaccess.h> /* copy_from_user put_user */
 #include <linux/version.h>
 #include <linux/vmalloc.h>
