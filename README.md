@@ -83,11 +83,11 @@ downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
 ### Demo
 ![image](assets/demo.gif)
 
-Nginx-ESCA shows 11% improvements over vanilla Nginx.
+Nginx-ESCA led by about 11% over vanilla Nginx.
 
 ![image](assets/light-demo.gif)
 
-lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
+lighttpd-ESCA led by about 13% over vanilla lighttpd.
 
 ## Citation
 
