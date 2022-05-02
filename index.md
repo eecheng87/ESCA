@@ -6,11 +6,11 @@ ESCA is capable of reducing the per-syscall overhead by up to 62% for embedded w
 ## Demo
 <img src="asset/demo.gif" alt="zigzag" />
 
-Nginx-ESCA shows 11% improvements over vanilla Nginx.
+Nginx-ESCA led by about 11% over vanilla Nginx.
 
 <img src="asset/light-demo.gif" alt="zigzag" />
 
-lighttpd-ESCA shows 13% improvements over vanilla lighttpd.
+lighttpd-ESCA led by about 13% over vanilla lighttpd.
 
 ## Presentation
 We also present our work with topic: *Reduce System Call Overhead for Event-Driven Servers* at [Open Source Submit Japan 2021](https://events.linuxfoundation.org/archive/2021/open-source-summit-japan/), organized by the [Linux Foundation](https://www.linuxfoundation.org/).
