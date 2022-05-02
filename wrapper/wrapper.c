@@ -26,8 +26,7 @@ size_t pgsize;
 
 long esca_init()
 {
-    btable =
-        (struct batch_entry *) aligned_alloc(pgsize, pgsize * MAX_THREAD_NUM);
+    btable = aligned_alloc(pgsize, pgsize * MAX_THREAD_NUM);
     syscall(__NR_register, btable);
     return 0;
 }
