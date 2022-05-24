@@ -1,6 +1,0 @@
---- old/nginx-1.20.0/src/os/unix/ngx_process.c	2021-04-20 21:35:47.000000000 +0800
-+++ new/nginx-1.20.0/src/os/unix/ngx_process.c	2022-04-27 16:52:24.705997000 +0800
-@@ -196,2 +196,3 @@
-     case 0:
-+        esca_init();
-         ngx_parent = ngx_pid;

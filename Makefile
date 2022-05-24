@@ -3,8 +3,8 @@ WRK_NAME := wrk-master
 WRK_PATH := downloads/$(WRK_NAME)
 WRK := wrk
 
-NGX_SOURCE := http://nginx.org/download/nginx-1.20.0.tar.gz
-NGX_NAME := nginx-1.20.0
+NGX_SOURCE := http://nginx.org/download/nginx-1.22.0.tar.gz
+NGX_NAME := nginx-1.22.0
 NGX_PATH := downloads/$(NGX_NAME)
 NGX := nginx
 
@@ -50,7 +50,7 @@ $(NGX):
 	mkdir local
 	cd $(NGX_PATH) && ./configure --prefix=$(PWD)/local
 	scripts/ngx.sh $(NGX_PATH)
-	cd $(OUT) && patch -p1 < ../patches/ngx_module.patch && patch -p1 < ../patches/ngx_process.patch
+	cd $(OUT) && patch -p1 < ../patches/nginx_module.patch && patch -p1 < ../patches/nginx_process.patch
 	cd $(NGX_PATH) && make && \
 	make install
 	cp -f configs/nginx.conf local/conf/nginx.conf
@@ -67,10 +67,10 @@ $(LIGHTY):
 	cp -f configs/lighttpd.conf $(LIGHTY_PATH)/src/lighttpd.conf
 
 nginx-launch:
-	./downloads/nginx-1.20.0/objs/nginx
+	./downloads/$(NGX_NAME)/objs/nginx
 
 nginx-esca-launch:
-	LD_PRELOAD=wrapper/wrapper.so ./downloads/nginx-1.20.0/objs/nginx
+	LD_PRELOAD=wrapper/wrapper.so ./downloads/$(NGX_NAME)/objs/nginx
 
 lighttpd-launch:
 	./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
