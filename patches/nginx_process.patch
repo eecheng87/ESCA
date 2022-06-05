@@ -1,0 +1,10 @@
+--- old/nginx-1.22.0/src/os/unix/ngx_process.c	2022-05-24 07:59:19.000000000 +0800
++++ new/nginx-1.22.0/src/os/unix/ngx_process.c	2022-06-05 16:03:34.503449915 +0800
+@@ -194,6 +194,7 @@
+         return NGX_INVALID_PID;
+ 
+     case 0:
++        esca_init();
+         ngx_parent = ngx_pid;
+         ngx_pid = ngx_getpid();
+         proc(cycle, data);
