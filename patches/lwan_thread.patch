@@ -1,0 +1,19 @@
+--- old/lwan-master/src/lib/lwan-thread.c	2022-06-05 08:53:47.000000000 +0800
++++ new/lwan-master/src/lib/lwan-thread.c	2022-06-09 21:18:31.790748000 +0800
+@@ -924,7 +924,7 @@
+                 break;
+             continue;
+         }
+-
++        batch_start();
+         for (struct epoll_event *event = events; n_fds--; event++) {
+             struct lwan_connection *conn = event->data.ptr;
+ 
+@@ -959,6 +959,7 @@
+ 
+         if (created_coros)
+             timeouts_add(t->wheel, &tq.timeout, 1000);
++        batch_flush();
+     }
+ 
+     pthread_barrier_wait(&lwan->thread.barrier);

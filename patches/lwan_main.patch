@@ -1,0 +1,11 @@
+--- old/lwan-master/src/bin/lwan/main.c	2022-06-05 08:53:47.000000000 +0800
++++ new/lwan-master/src/bin/lwan/main.c	2022-06-09 21:13:59.257682000 +0800
+@@ -224,7 +224,7 @@
+ 
+     c = *lwan_get_default_config();
+     c.listener = strdup("*:8080");
+-
++    esca_init();
+     switch (parse_args(argc, argv, &c, root, &sj)) {
+     case ARGS_SERVE_FILES:
+         lwan_status_info("Serving files from %s", root);

@@ -64,6 +64,8 @@ __attribute__((constructor)) static void setup(void)
         real_shutdown ? real_shutdown : dlsym(RTLD_NEXT, "shutdown");
     real_sendfile =
         real_sendfile ? real_sendfile : dlsym(RTLD_NEXT, "sendfile");
+    real_send =
+        real_send ? real_send : dlsym(RTLD_NEXT, "send");
 
     global_i = global_j = 0;
 }

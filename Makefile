@@ -14,6 +14,11 @@ LIGHTY_NAME := lighttpd1.4-lighttpd-1.4.58
 LIGHTY_PATH := downloads/$(LIGHTY_NAME)
 LIGHTY := lighttpd
 
+LWAN_SOURCE := https://github.com/lpereira/lwan/archive/master.zip
+LWAN_NAME := lwan-master
+LWAN_PATH := downloads/$(LWAN_NAME)
+LWAN := lwan
+
 LIBDUMMY_PATH := $(shell find $(shell pwd) -type f -name "libdummy.so") | sed 's_/_\\/_g'
 PWD := $(shell pwd)
 
@@ -21,12 +26,14 @@ OUT := downloads
 
 all: lkm wrapper
 
-.PHONY: $(WRK) $(NGX) $(LIGHTY) config lkm wrapper clean
+.PHONY: $(WRK) $(NGX) $(LIGHTY) $(LWAN) config lkm wrapper clean
 
 ifeq ($(strip $(TARGET)),nginx)
 TARGET = nginx
-else
+else ifeq ($(strip $(TARGET)),lighttpd)
 TARGET = lighttpd
+else
+TARGET = lwan
 endif
 
 config:
@@ -66,6 +73,17 @@ $(LIGHTY):
 	cd $(LIGHTY_PATH) && sudo make install
 	cp -f configs/lighttpd.conf $(LIGHTY_PATH)/src/lighttpd.conf
 
+$(LWAN):
+	@echo "download lwan..."
+	wget $(LWAN_SOURCE)
+	unzip -d $(OUT) master.zip
+	$(RM) master.zip
+	scripts/lwan.sh $(LWAN_PATH)
+	cd $(OUT) && patch -p1 < ../patches/lwan_thread.patch && patch -p1 < ../patches/lwan_main.patch
+	cd $(LWAN_PATH) && mkdir build && cd build && \
+	cmake .. -DCMAKE_BUILD_TYPE=Release && make
+	cp -f configs/lwan.conf $(LWAN_PATH)/lwan.conf
+
 nginx-launch:
 	./downloads/$(NGX_NAME)/objs/nginx
 
@@ -77,6 +95,12 @@ lighttpd-launch:
 
 lighttpd-esca-launch:
 	LD_PRELOAD=wrapper/wrapper.so ./$(LIGHTY_PATH)/src/lighttpd -D -f $(LIGHTY_PATH)/src/lighttpd.conf
+
+lwan-launch:
+	./downloads/$(LWAN_NAME)/build/src/bin/lwan/lwan -c $(LWAN_PATH)/lwan.conf
+
+lwan-esca-launch:
+	LD_PRELOAD=wrapper/wrapper.so ./downloads/$(LWAN_NAME)/build/src/bin/lwan/lwan -c $(LWAN_PATH)/lwan.conf
 
 lkm: config
 	sudo $(MAKE) -C $@ $(MAKECMDGOALS)
@@ -94,6 +118,7 @@ clean:
 	rm -rf $(WRK_PATH)
 	rm -rf $(NGX_PATH)
 	rm -rf $(LIGHTY_PATH)
+	rm -rf $(LWAN_PATH)
 	rm -rf local
 	$(MAKE) -C lkm clean
 	$(MAKE) -C wrapper clean
