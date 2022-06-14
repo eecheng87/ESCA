@@ -34,3 +34,5 @@ typedef long (*shutdown_t)(int fd, int how);
 shutdown_t real_shutdown;
 typedef long (*writev_t)(int fd, const struct iovec *iov, int iovcnt);
 writev_t real_writev;
+typedef long (*send_t)(int sockfd, const void *buf, size_t len, int flags);
+send_t real_send;

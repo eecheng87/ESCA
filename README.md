@@ -21,9 +21,9 @@ cd ESCA
 ```
 
 ## Build from source
-Compile files under directory `lkm/` and `wrapper/` (The default target is lighttpd)
+Compile files under directory `lkm/` and `wrapper/` (The default target is lwan)
 ```shell
-make TARGET=<nginx | lighttpd>
+make TARGET=<nginx | lighttpd | lwan>
 ```
 
 ### Build adaptation target
@@ -40,6 +40,11 @@ make nginx
 Download and build lighttpd
 ```shell
 make lighttpd
+```
+
+Download and build lwan
+```shell
+make lwan
 ```
 
 ## Testing
@@ -68,6 +73,18 @@ make load-lkm
 make lighttpd-esca-launch # lighttpd-esca
 ```
 
+### Launch lwan
+Choose either
+```shell
+make lwan-launch # origin lwan
+```
+or
+
+```shell
+make load-lkm
+make lwan-esca-launch # lwan-esca
+```
+
 ### Download workloads
 ```shell
 git submodule init
@@ -76,7 +93,7 @@ git submodule update
 
 ### Benchmarking
 ```shell
-# nginx is at port 8081; lighttpd is at port 3000
+# nginx is at port 8081; lighttpd is at port 3000; lwan is at port 8080
 downloads/wrk-master/wrk -c 50 -d 5s -t 4 http://localhost:8081/a20.html
 ```
 
@@ -88,6 +105,10 @@ Nginx-ESCA led by about 11% over vanilla Nginx.
 ![image](assets/light-demo.gif)
 
 lighttpd-ESCA led by about 13% over vanilla lighttpd.
+
+![image](assets/lwan-demo.gif)
+
+lwan-ESCA led by about 30% over vanilla lwan.
 
 ## Citation
 
