@@ -170,5 +170,4 @@ __attribute__((constructor)) static void setup(void)
 ## Reference 
 * [GitHub: ESCA](https://github.com/eecheng87/ESCA)
 * [ESCA thesis](https://eecheng87.github.io/ESCA/main.pdf)
-* [System Call Note](https://hackmd.io/@combo-tw/Linux-%E8%AE%80%E6%9B%B8%E6%9C%83/%2F%40a29654068%2FHyD4Lu_Dr)
 
