@@ -3,7 +3,7 @@
 The code section enclosed by `batch_start()` and `batch_flush()` is called batching segment. It can appear more than one time in a single application. Compared with typical syscalls, ESCA eliminates mode switches in batching segments by decoupling syscalls. Instead of switching to the kernel or executing the corresponding service routine, syscalls in batching segment only record their syscall ID and arguments in the shared table.After batch_flush is called, ESCA finally switches to kernel mode, executes all syscalls in the shared table, and then switches back to user mode.
 ## Typical system call flow
 ### Overview
-![image](assets/systemcall_flow.png)
+![image](assets/syscall-flow.png)
 
 1. User application call system call
 2. From user mode switches to kernel mode by an interrupt 
