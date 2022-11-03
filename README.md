@@ -111,7 +111,8 @@ lighttpd-ESCA led by about 13% over vanilla lighttpd.
 lwan-ESCA led by about 30% over vanilla lwan.
 
 ## Technical Description
-The code section enclosed by `batch_start()` and `batch_flush()` is called batching segment. It can appear more than one time in a single application.
+The code section enclosed by `batch_start()` and `batch_flush()` is called batching segment.
+It can appear more than one time in a single application.
 Compared with typical syscalls, ESCA eliminates mode switches in batching segments by decoupling syscalls.
 Instead of switching to the kernel or executing the corresponding service routine, syscalls in batching segment only record their syscall ID and arguments in the shared table.
 After `batch_flush` is invoked, ESCA finally switches to kernel mode, executes all syscalls in the shared table, and then switches back to user mode.
@@ -127,7 +128,7 @@ After `batch_flush` is invoked, ESCA finally switches to kernel mode, executes a
 6. After finishing system call service routine, switch back to user mode
 
 ### System Call wrappers
-Because system call is invokved by assembly routines, wrapping the assembly code with the wrapper function would increase readability of the program.
+Because system call is invoked by assembly routines, wrapping the assembly code with the wrapper function would increase readability of the program.
 e.g.,
 ```c
 #define SYSCALL(name, a1, a2, a3, a4, a5, a6)                             \
@@ -165,15 +166,14 @@ static inline void *brk(void *addr)
 ```
 
 ### System Call Hooks
-We cannot add syscalls without modifying the Linux kernel. What we can do is to replace an entry of the syscall table with our customized handler. It is crucial to make sure that the replaced entry is unused; otherwise, the system may crash after hooking the syscalls.
+ESCA locates the address of the syscall table through the kernel symbol table and replace the syscall table entry with our customized handler.
+Also, it is necessary to clear the write protection bit of the control register if modifying the syscall table is required.
 
-ESCA locate the address of the syscall table through the kernel symbol table and replace the syscall table entry with our customized handler. Also, it is necessary to clear the write protection bit of the control register if modifying the syscall table is required.
+Two system calls ESCA intercepts
+* `sys_batch`: iterates shared table and execute all syscalls recorded in the shared table, and then switches back to user mode.
+* `sys_register`: maps userspace shared table to kernel space memory and initialization.
 
-Two system call ESCA replaced
-1. sys_batch: iterate shared table and execute all syscalls recorded in the shared table, then switch back to user mode.
-2. sys_register: mapping userspace shared table to kernel space memory and initialization.
-
-Replace system call handler
+Replace system call handlers:
 ```c
 // find out syscall table address
 scTab = (void **) (smSCTab + ((char *) &system_wq - smSysWQ));
@@ -193,7 +193,8 @@ disallow_writes();
 ```
 
 ### Share the same physical address space between kernel and user space
-ESCA use `get_user_pages` to get the physical page address which the userspace memory page corresponds to, and use `kmap` to map the physical pages to the kernel address space. In this way, data sharing is without the copy and the procedure is a one-time allocation.
+ESCA deploys `get_user_pages` to get the physical page address which the userspace memory page corresponds to, and utilizes `kmap` to map the physical pages to the kernel address space.
+In this way, data sharing is without data copy, and the procedure is a one-time allocation.
 
 * `batch_register` syscall maps userspace shared table to kernel space memory and initialization.
 ```c
@@ -227,7 +228,8 @@ asmlinkage long sys_register(const struct pt_regs *regs)
 ```
 
 ### Change the typical system call behavior
-To change the behavior of the syscall, when the application is executed, the syscall wrapper of glibc is replaced with our shared library through LD_PRELOAD. Customized syscall wrapper will determine if the system call is in the `batch segment`.
+To change the behavior of the syscall, when the application is executed, the syscall wrapper of glibc is replaced with our shared library through `LD_PRELOAD`.
+Customized syscall wrapper will determine if the system call is in the `batch segment`.
 1. Out of `batch segment`: call original glibc syscall wrapper we backup.
 2. In `batch segment`: Record syscall ID and arguments in the shared table.
 
@@ -254,7 +256,6 @@ __attribute__((constructor)) static void setup(void)
 }
 ```
 
-
 ## Citation
 
 Please see our [PDP 2022](https://pdp2022.infor.uva.es/) paper, available in the [IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9756707) digital library, and you can get a [preprint copy](https://eecheng87.github.io/ESCA/main.pdf).
@@ -279,6 +280,6 @@ a MIT-style license that can be found in the LICENSE file.
 ## Reference
 * B. M. Michelson, "Event-driven architecture overview," Patricia Seybold Group, vol. 2, no. 12, pp. 10–1571, 2006.
 * A. S. Rahul Jadhav, Zhen Cao, "Improved system call batching for network I/O," 2019.
-* A. Purohit, J. Spadavecchia, C. Wright, and E. Zadok, "Improving application performance through system call composition,"2003.
+* A. Purohit, J. Spadavecchia, C. Wright, and E. Zadok, "Improving application performance through system call composition," 2003.
 * M. Rajagopalan, S. K. Debray, M. A. Hiltunen, and R. D. Schlichting, "System call clustering: A profile-directed optimization technique," 2002.
-* D. Hansen, [KAISER: unmap most of the kernel from userspace page tables](https://lwn.net/Articles/738997/), 2017
+* D. Hansen, [KAISER: unmap most of the kernel from userspace page tables](https://lwn.net/Articles/738997/), 2017.
