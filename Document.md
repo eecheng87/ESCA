@@ -168,6 +168,18 @@ __attribute__((constructor)) static void setup(void)
 > $ ab -n 10 -c 10 -k http://127.0.0.1:3000/
 
 ## Reference 
-* [GitHub: ESCA](https://github.com/eecheng87/ESCA)
-* [ESCA thesis](https://eecheng87.github.io/ESCA/main.pdf)
+* B. M. Michelson, “Event-driven architecture overview,” Patricia Seybold
+Group, vol. 2, no. 12, pp. 10–1571, 2006.
+* A. S. Rahul Jadhav, Zhen Cao, “Improved system call batching for
+network I/O,” 2019.
+* A. Purohit, J. Spadavecchia, C. Wright, and E. Zadok, “Improving
+application performance through system call composition,” Citeseer,
+Tech. Rep., 2003.
+* M. Rajagopalan, S. K. Debray, M. A. Hiltunen, and R. D. Schlichting,
+“System call clustering: A profile-directed optimization technique,”
+Technical Report, 2002.
+* D. Hansen. (2017) KAISER: unmap most of the kernel from userspace
+page tables. [Online]. Available: https://lwn.net/Articles/738997/
+* W. Glozer. (2018) wrk: a HTTP benchmarking tool. [Online]. Available:
+https://github.com/wg/wrk
 
